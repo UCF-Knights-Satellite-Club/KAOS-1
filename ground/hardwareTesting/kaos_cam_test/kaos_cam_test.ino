@@ -12,6 +12,8 @@
 
 #define  BUFFER_SIZE  0xff
 
+#define PIC_COUNT 5
+
 Arducam_Mega myCAM(CAM_CS);
 
 uint8_t count = 1;
@@ -36,7 +38,6 @@ void setup() {
 
   // Initialize SD
   Serial.print(F("Initializing SD..."));
-  pinMode(CS, OUTPUT);
   if (!SD.begin(CS)) {
     Serial.println(F("Error"));
     Serial.println(F("Card mount failed"));
@@ -56,7 +57,7 @@ void setup() {
   Serial.println();
   
   // Lower SPI speed for stability
-  //SPI.setClockDivider(SPI_CLOCK_DIV2);
+  SPI.setClockDivider(SPI_CLOCK_DIV2);
 
   // Delay to stop first image from being green
   arducamDelayMs(500);
@@ -64,7 +65,8 @@ void setup() {
 
 void loop() {
   // Stop after 5 images
-  if (count > 5) {
+  if (count > PIC_COUNT) {
+    SD.end();
     Serial.println(F("SD card safe to remove"));
     while (1);
   }
@@ -72,7 +74,8 @@ void loop() {
   // Countdown
   Serial.print(F("Taking picture "));
   Serial.print(count);
-  Serial.println(F("/5"));
+  Serial.print(F("/"));
+  Serial.println(PIC_COUNT);
   Serial.print(F("3..."));
   arducamDelayMs(500);
   Serial.print(F("2..."));
@@ -83,7 +86,7 @@ void loop() {
   arducamDelayMs(500);
 
   // Take picture
-  myCAM.takePicture(CAM_IMAGE_MODE_FHD,CAM_IMAGE_PIX_FMT_JPG);
+  myCAM.takePicture(CAM_IMAGE_MODE_WQXGA2,CAM_IMAGE_PIX_FMT_JPG);
 
   // Save image
   while (myCAM.getReceivedLength())
