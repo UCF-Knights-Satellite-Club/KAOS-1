@@ -149,10 +149,9 @@
 </layers>
 <board>
 <plain>
-<wire x1="0" y1="0" x2="90" y2="0" width="0" layer="20"/>
-<wire x1="90" y1="0" x2="90" y2="90" width="0" layer="20"/>
-<wire x1="90" y1="90" x2="0" y2="90" width="0" layer="20"/>
-<wire x1="0" y1="90" x2="0" y2="0" width="0" layer="20"/>
+<wire x1="4" y1="0" x2="86" y2="0" width="0" layer="20"/>
+<wire x1="90" y1="4" x2="90" y2="86" width="0" layer="20"/>
+<wire x1="86" y1="90" x2="4" y2="90" width="0" layer="20"/>
 <polygon width="0.2" layer="30">
 <vertex x="1" y="32.4"/>
 <vertex x="1" y="57.5"/>
@@ -1805,6 +1804,11 @@ REV1</text>
 <rectangle x1="27.2161" y1="25.4889" x2="27.3177" y2="25.5143" layer="21"/>
 <rectangle x1="27.1907" y1="25.5143" x2="27.3177" y2="25.5397" layer="21"/>
 <text x="15" y="75" size="1.778" layer="21" font="vector" align="bottom-center">POWER BOARD</text>
+<wire x1="0" y1="86" x2="0" y2="4" width="0" layer="20"/>
+<wire x1="4" y1="0" x2="0" y2="4" width="0" layer="20" curve="-90"/>
+<wire x1="90" y1="4" x2="86" y2="0" width="0" layer="20" curve="-90"/>
+<wire x1="86" y1="90" x2="90" y2="86" width="0" layer="20" curve="-90"/>
+<wire x1="0" y1="86" x2="4" y2="90" width="0" layer="20" curve="-90"/>
 </plain>
 <libraries>
 <library name="Breakouts">
