@@ -1804,6 +1804,7 @@ REV1</text>
 <rectangle x1="27.2161" y1="25.4635" x2="27.3431" y2="25.4889" layer="21"/>
 <rectangle x1="27.2161" y1="25.4889" x2="27.3177" y2="25.5143" layer="21"/>
 <rectangle x1="27.1907" y1="25.5143" x2="27.3177" y2="25.5397" layer="21"/>
+<text x="15" y="75" size="1.778" layer="21" font="vector" align="bottom-center">POWER BOARD</text>
 </plain>
 <libraries>
 <library name="Breakouts">
@@ -2131,7 +2132,7 @@ design rules under a new name.</description>
 </autorouter>
 <elements>
 <element name="U$1" library="Breakouts" package="LIGHTAPRS" value="LIGHTAPRS" x="51.372" y="73.3382" smashed="yes" rot="R270"/>
-<element name="X1" library="Rembrandt Electronics - JST XH Connectors v1-0" package="JST-XH_S2B" value="JST-XH-02-PIN" x="14.5424" y="80.0828" smashed="yes"/>
+<element name="X1" library="Rembrandt Electronics - JST XH Connectors v1-0" package="JST-XH_S2B" value="JST-XH-02-PIN" x="13.5424" y="80.0828" smashed="yes"/>
 <element name="J1" library="CONUFL001-SMD-T" package="LINX_CONUFL001-SMD-T" value="CONUFL001-SMD-T" x="45" y="48" smashed="yes">
 <attribute name="AVAILABILITY" value="In Stock" x="45" y="48" size="1.778" layer="27" display="off"/>
 <attribute name="CHECK_PRICES" value="https://www.snapeda.com/parts/CONUFL001-SMD/Linx+Technologies+Inc./view-part/?ref=eda" x="45" y="48" size="1.778" layer="27" display="off"/>
@@ -2149,11 +2150,11 @@ design rules under a new name.</description>
 <element name="H1" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,0-PAD" package3d_urn="urn:adsk.eagle:package:14280/1" value="MOUNT-PAD-ROUND3.0" x="85" y="45" smashed="yes">
 <attribute name="POPULARITY" value="17" x="85" y="45" size="0.0508" layer="27" font="vector" display="off"/>
 </element>
-<element name="H2" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,0-PAD" package3d_urn="urn:adsk.eagle:package:14280/1" value="MOUNT-PAD-ROUND3.0" x="65" y="45" smashed="yes">
-<attribute name="POPULARITY" value="17" x="65" y="45" size="0.0508" layer="27" font="vector" display="off"/>
+<element name="H2" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,0-PAD" package3d_urn="urn:adsk.eagle:package:14280/1" value="MOUNT-PAD-ROUND3.0" x="70" y="45" smashed="yes">
+<attribute name="POPULARITY" value="17" x="70" y="45" size="0.0508" layer="27" font="vector" display="off"/>
 </element>
-<element name="H3" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,0-PAD" package3d_urn="urn:adsk.eagle:package:14280/1" value="MOUNT-PAD-ROUND3.0" x="25" y="45" smashed="yes">
-<attribute name="POPULARITY" value="17" x="25" y="45" size="0.0508" layer="27" font="vector" display="off"/>
+<element name="H3" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,0-PAD" package3d_urn="urn:adsk.eagle:package:14280/1" value="MOUNT-PAD-ROUND3.0" x="20" y="45" smashed="yes">
+<attribute name="POPULARITY" value="17" x="20" y="45" size="0.0508" layer="27" font="vector" display="off"/>
 </element>
 <element name="H4" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,0-PAD" package3d_urn="urn:adsk.eagle:package:14280/1" value="MOUNT-PAD-ROUND3.0" x="5" y="45" smashed="yes">
 <attribute name="POPULARITY" value="17" x="5" y="45" size="0.0508" layer="27" font="vector" display="off"/>
@@ -2164,14 +2165,14 @@ design rules under a new name.</description>
 <contactref element="U$1" pad="GND1"/>
 <contactref element="U$1" pad="GND2"/>
 <contactref element="X1" pad="PIN1"/>
-<wire x1="14.5424" y1="80.0828" x2="27.2552" y2="67.37" width="0.1524" layer="1"/>
+<wire x1="13.5424" y1="80.0828" x2="26.2552" y2="67.37" width="0.1524" layer="1"/>
 <wire x1="31.37" y1="67.37" x2="45" y2="53.74" width="0.1524" layer="1"/>
 <contactref element="J1" pad="3"/>
 <contactref element="J1" pad="2"/>
 <wire x1="43.525" y1="48" x2="45" y2="49.475" width="0.1524" layer="1"/>
 <wire x1="46.475" y1="48" x2="45" y2="49.475" width="0.1524" layer="1"/>
 <wire x1="45" y1="49.475" x2="45" y2="53.74" width="0.1524" layer="1"/>
-<wire x1="31.37" y1="67.37" x2="27.2552" y2="67.37" width="0.1524" layer="1"/>
+<wire x1="31.37" y1="67.37" x2="26.2552" y2="67.37" width="0.1524" layer="1"/>
 <wire x1="68.872" y1="59.3382" x2="60.8402" y2="67.37" width="0.1524" layer="1"/>
 <wire x1="60.8402" y1="67.37" x2="31.37" y2="67.37" width="0.1524" layer="1"/>
 <wire x1="68.872" y1="87.3382" x2="68.872" y2="75.4018" width="0.1524" layer="1"/>
@@ -2181,8 +2182,8 @@ design rules under a new name.</description>
 <contactref element="X1" pad="PIN2"/>
 <contactref element="U$1" pad="VBAT1"/>
 <contactref element="U$1" pad="VBAT2"/>
-<wire x1="28.1252" y1="69" x2="17.0424" y2="80.0828" width="0.1524" layer="16"/>
-<wire x1="61.2102" y1="69" x2="28.1252" y2="69" width="0.1524" layer="16"/>
+<wire x1="27.1252" y1="69" x2="16.0424" y2="80.0828" width="0.1524" layer="16"/>
+<wire x1="61.2102" y1="69" x2="27.1252" y2="69" width="0.1524" layer="16"/>
 <wire x1="70.872" y1="59.3382" x2="61.2102" y2="69" width="0.1524" layer="16"/>
 <wire x1="70.872" y1="78.6618" x2="61.2102" y2="69" width="0.1524" layer="16"/>
 <wire x1="70.872" y1="87.3382" x2="70.872" y2="78.6618" width="0.1524" layer="16"/>
