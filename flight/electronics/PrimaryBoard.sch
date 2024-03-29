@@ -5806,6 +5806,8 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <classes>
 <class number="0" name="default" width="0" drill="0">
 </class>
+<class number="1" name="power" width="0.5" drill="0">
+</class>
 </classes>
 <parts>
 <part name="ESP32" library="ESP32-DEVKIT-V1" deviceset="ESP32-DEVKIT-V1" device=""/>
@@ -6007,7 +6009,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <busses>
 </busses>
 <nets>
-<net name="GND" class="0">
+<net name="GND" class="1">
 <segment>
 <pinref part="GND4" gate="1" pin="GND"/>
 <wire x1="104.14" y1="109.22" x2="104.14" y2="104.14" width="0.1524" layer="91"/>
@@ -6100,7 +6102,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <label x="86.36" y="40.64" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="+3V3" class="0">
+<net name="+3V3" class="1">
 <segment>
 <pinref part="ESP32" gate="G$1" pin="3V3"/>
 <wire x1="83.82" y1="83.82" x2="86.36" y2="83.82" width="0.1524" layer="91"/>

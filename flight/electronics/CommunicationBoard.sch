@@ -770,6 +770,39 @@ MODULE</text>
 </deviceset>
 </devicesets>
 </library>
+<library name="supply1" urn="urn:adsk.eagle:library:371">
+<description>&lt;b&gt;Supply Symbols&lt;/b&gt;&lt;p&gt;
+ GND, VCC, 0V, +5V, -5V, etc.&lt;p&gt;
+ Please keep in mind, that these devices are necessary for the
+ automatic wiring of the supply signals.&lt;p&gt;
+ The pin name defined in the symbol is identical to the net which is to be wired automatically.&lt;p&gt;
+ In this library the device names are the same as the pin names of the symbols, therefore the correct signal names appear next to the supply symbols in the schematic.&lt;p&gt;
+ &lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+</packages>
+<symbols>
+<symbol name="GND" urn="urn:adsk.eagle:symbol:26925/1" library_version="1">
+<wire x1="-1.905" y1="0" x2="1.905" y2="0" width="0.254" layer="94"/>
+<text x="-2.54" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="GND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="GND" urn="urn:adsk.eagle:component:26954/1" prefix="GND" library_version="1">
+<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
+<gates>
+<gate name="1" symbol="GND" x="0" y="0"/>
+</gates>
+<devices>
+<device name="">
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -787,6 +820,11 @@ MODULE</text>
 <part name="H2" library="holes" library_urn="urn:adsk.eagle:library:237" deviceset="MOUNT-PAD-ROUND" device="3.0" package3d_urn="urn:adsk.eagle:package:14280/1"/>
 <part name="H3" library="holes" library_urn="urn:adsk.eagle:library:237" deviceset="MOUNT-PAD-ROUND" device="3.0" package3d_urn="urn:adsk.eagle:package:14280/1"/>
 <part name="H4" library="holes" library_urn="urn:adsk.eagle:library:237" deviceset="MOUNT-PAD-ROUND" device="3.0" package3d_urn="urn:adsk.eagle:package:14280/1"/>
+<part name="H5" library="holes" library_urn="urn:adsk.eagle:library:237" deviceset="MOUNT-PAD-ROUND" device="3.0" package3d_urn="urn:adsk.eagle:package:14280/1"/>
+<part name="H6" library="holes" library_urn="urn:adsk.eagle:library:237" deviceset="MOUNT-PAD-ROUND" device="3.0" package3d_urn="urn:adsk.eagle:package:14280/1"/>
+<part name="H7" library="holes" library_urn="urn:adsk.eagle:library:237" deviceset="MOUNT-PAD-ROUND" device="3.0" package3d_urn="urn:adsk.eagle:package:14280/1"/>
+<part name="H8" library="holes" library_urn="urn:adsk.eagle:library:237" deviceset="MOUNT-PAD-ROUND" device="3.0" package3d_urn="urn:adsk.eagle:package:14280/1"/>
+<part name="GND1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -821,20 +859,52 @@ MODULE</text>
 <attribute name="NAME" x="15.494" y="-1.9558" size="1.778" layer="95"/>
 <attribute name="VALUE" x="15.494" y="-5.0038" size="1.778" layer="96"/>
 </instance>
+<instance part="H5" gate="G$1" x="12.7" y="-17.78" smashed="yes">
+<attribute name="NAME" x="15.494" y="-17.1958" size="1.778" layer="95"/>
+<attribute name="VALUE" x="15.494" y="-20.2438" size="1.778" layer="96"/>
+</instance>
+<instance part="H6" gate="G$1" x="12.7" y="-25.4" smashed="yes">
+<attribute name="NAME" x="15.494" y="-24.8158" size="1.778" layer="95"/>
+<attribute name="VALUE" x="15.494" y="-27.8638" size="1.778" layer="96"/>
+</instance>
+<instance part="H7" gate="G$1" x="12.7" y="-33.02" smashed="yes">
+<attribute name="NAME" x="15.494" y="-32.4358" size="1.778" layer="95"/>
+<attribute name="VALUE" x="15.494" y="-35.4838" size="1.778" layer="96"/>
+</instance>
+<instance part="H8" gate="G$1" x="12.7" y="-40.64" smashed="yes">
+<attribute name="NAME" x="15.494" y="-40.0558" size="1.778" layer="95"/>
+<attribute name="VALUE" x="15.494" y="-43.1038" size="1.778" layer="96"/>
+</instance>
+<instance part="GND1" gate="1" x="7.62" y="-45.72" smashed="yes">
+<attribute name="VALUE" x="5.08" y="-48.26" size="1.778" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
 <nets>
 <net name="GND" class="0">
 <segment>
-<wire x1="15.24" y1="33.02" x2="-5.08" y2="33.02" width="0.1524" layer="91"/>
 <pinref part="U$1" gate="G$1" pin="GND"/>
 <pinref part="X1" gate="-1" pin="S"/>
-<pinref part="J1" gate="G$1" pin="2"/>
-<wire x1="-5.08" y1="33.02" x2="-30.48" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="-7.62" y1="7.62" x2="-5.08" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="-5.08" y1="7.62" x2="-5.08" y2="33.02" width="0.1524" layer="91"/>
-<junction x="-5.08" y="33.02"/>
+<wire x1="15.24" y1="33.02" x2="-30.48" y2="33.02" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="GND1" gate="1" pin="GND"/>
+<pinref part="H8" gate="G$1" pin="MOUNT"/>
+<wire x1="7.62" y1="-43.18" x2="7.62" y2="-40.64" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="-40.64" x2="10.16" y2="-40.64" width="0.1524" layer="91"/>
+<pinref part="H7" gate="G$1" pin="MOUNT"/>
+<wire x1="7.62" y1="-40.64" x2="7.62" y2="-33.02" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="-33.02" x2="10.16" y2="-33.02" width="0.1524" layer="91"/>
+<junction x="7.62" y="-40.64"/>
+<pinref part="H6" gate="G$1" pin="MOUNT"/>
+<wire x1="7.62" y1="-33.02" x2="7.62" y2="-25.4" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="-25.4" x2="10.16" y2="-25.4" width="0.1524" layer="91"/>
+<junction x="7.62" y="-33.02"/>
+<pinref part="H5" gate="G$1" pin="MOUNT"/>
+<wire x1="7.62" y1="-25.4" x2="7.62" y2="-17.78" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="-17.78" x2="10.16" y2="-17.78" width="0.1524" layer="91"/>
+<junction x="7.62" y="-25.4"/>
 </segment>
 </net>
 <net name="VBAT" class="0">
@@ -846,7 +916,7 @@ MODULE</text>
 <wire x1="-2.54" y1="35.56" x2="-30.48" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="SIG" class="0">
+<net name="SIG+" class="0">
 <segment>
 <pinref part="J1" gate="G$1" pin="1"/>
 <wire x1="-7.62" y1="10.16" x2="5.08" y2="10.16" width="0.1524" layer="91"/>
@@ -857,13 +927,18 @@ MODULE</text>
 <pinref part="H2" gate="G$1" pin="MOUNT"/>
 <wire x1="10.16" y1="12.7" x2="5.08" y2="12.7" width="0.1524" layer="91"/>
 <junction x="5.08" y="12.7"/>
+</segment>
+</net>
+<net name="SIG-" class="0">
+<segment>
+<pinref part="J1" gate="G$1" pin="2"/>
+<wire x1="-7.62" y1="7.62" x2="5.08" y2="7.62" width="0.1524" layer="91"/>
 <pinref part="H3" gate="G$1" pin="MOUNT"/>
 <wire x1="10.16" y1="5.08" x2="5.08" y2="5.08" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="5.08" x2="5.08" y2="10.16" width="0.1524" layer="91"/>
-<junction x="5.08" y="10.16"/>
 <pinref part="H4" gate="G$1" pin="MOUNT"/>
 <wire x1="10.16" y1="-2.54" x2="5.08" y2="-2.54" width="0.1524" layer="91"/>
 <wire x1="5.08" y1="-2.54" x2="5.08" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="7.62" x2="5.08" y2="5.08" width="0.1524" layer="91"/>
 <junction x="5.08" y="5.08"/>
 </segment>
 </net>
