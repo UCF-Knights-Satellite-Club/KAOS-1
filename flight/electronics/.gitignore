@@ -52,3 +52,6 @@ eagle.epf
 
 # CAM zip
 *.zip
+
+# Bitmap import script
+bmp.scr
