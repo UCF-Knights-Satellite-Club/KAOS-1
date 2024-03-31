@@ -7,7 +7,7 @@
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.1" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
@@ -746,116 +746,116 @@ Number of pins: &lt;b&gt;12&lt;/b&gt;&lt;b&gt;&lt;P&gt;
 <pad name="12" x="13.97" y="0" drill="1.016" rot="R90"/>
 </package>
 <package name="JST-XH_S5B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="12.5" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="12.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="12.5" y1="-2.3" x2="12.5" y2="9.1" width="0.127" layer="21"/>
 <text x="5" y="5" size="1.27" layer="21" font="vector" align="center">JST-XH</text>
-<pad name="PIN3" x="5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN4" x="7.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN5" x="10" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN3" x="5" y="0" drill="1" diameter="2"/>
+<pad name="PIN4" x="7.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN5" x="10" y="0" drill="1" diameter="2"/>
 </package>
 <package name="JST-XH_S10B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="25" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="25" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="25" y1="-2.3" x2="25" y2="9.1" width="0.127" layer="21"/>
 <text x="11.3" y="5" size="1.27" layer="21" font="vector" align="center">JST-XH</text>
-<pad name="PIN3" x="5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN4" x="7.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN5" x="10" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN6" x="12.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN7" x="15" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN8" x="17.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN9" x="20" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN10" x="22.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN3" x="5" y="0" drill="1" diameter="2"/>
+<pad name="PIN4" x="7.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN5" x="10" y="0" drill="1" diameter="2"/>
+<pad name="PIN6" x="12.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN7" x="15" y="0" drill="1" diameter="2"/>
+<pad name="PIN8" x="17.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN9" x="20" y="0" drill="1" diameter="2"/>
+<pad name="PIN10" x="22.5" y="0" drill="1" diameter="2"/>
 </package>
 <package name="JST-XH_S7B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="17.5" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="17.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="17.5" y1="-2.3" x2="17.5" y2="9.1" width="0.127" layer="21"/>
 <text x="7.5" y="5" size="1.27" layer="21" font="vector" align="center">JST-XH</text>
-<pad name="PIN3" x="5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN4" x="7.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN5" x="10" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN6" x="12.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN7" x="15" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN3" x="5" y="0" drill="1" diameter="2"/>
+<pad name="PIN4" x="7.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN5" x="10" y="0" drill="1" diameter="2"/>
+<pad name="PIN6" x="12.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN7" x="15" y="0" drill="1" diameter="2"/>
 </package>
 <package name="JST-XH_S6B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="15" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="15" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="15" y1="-2.3" x2="15" y2="9.1" width="0.127" layer="21"/>
 <text x="6.3" y="5" size="1.27" layer="21" font="vector" align="center">JST-XH</text>
-<pad name="PIN3" x="5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN4" x="7.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN5" x="10" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN6" x="12.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN3" x="5" y="0" drill="1" diameter="2"/>
+<pad name="PIN4" x="7.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN5" x="10" y="0" drill="1" diameter="2"/>
+<pad name="PIN6" x="12.5" y="0" drill="1" diameter="2"/>
 </package>
 <package name="JST-XH_S8B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="20" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="20" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="20" y1="-2.3" x2="20" y2="9.1" width="0.127" layer="21"/>
 <text x="8.8" y="5" size="1.27" layer="21" font="vector" align="center">JST-XH</text>
-<pad name="PIN3" x="5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN4" x="7.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN5" x="10" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN6" x="12.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN7" x="15" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN8" x="17.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN3" x="5" y="0" drill="1" diameter="2"/>
+<pad name="PIN4" x="7.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN5" x="10" y="0" drill="1" diameter="2"/>
+<pad name="PIN6" x="12.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN7" x="15" y="0" drill="1" diameter="2"/>
+<pad name="PIN8" x="17.5" y="0" drill="1" diameter="2"/>
 </package>
 <package name="JST-XH_S3B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="7.5" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="7.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="7.5" y1="-2.3" x2="7.5" y2="9.1" width="0.127" layer="21"/>
 <text x="2.5" y="5" size="1.27" layer="21" font="vector" align="center">JST-XH</text>
-<pad name="PIN3" x="5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN3" x="5" y="0" drill="1" diameter="2"/>
 </package>
 <package name="JST-XH_S9B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="22.5" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="22.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="22.5" y1="-2.3" x2="22.5" y2="9.1" width="0.127" layer="21"/>
 <text x="10" y="5" size="1.27" layer="21" font="vector" align="center">JST-XH</text>
-<pad name="PIN3" x="5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN4" x="7.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN5" x="10" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN6" x="12.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN7" x="15" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN8" x="17.5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN9" x="20" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN3" x="5" y="0" drill="1" diameter="2"/>
+<pad name="PIN4" x="7.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN5" x="10" y="0" drill="1" diameter="2"/>
+<pad name="PIN6" x="12.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN7" x="15" y="0" drill="1" diameter="2"/>
+<pad name="PIN8" x="17.5" y="0" drill="1" diameter="2"/>
+<pad name="PIN9" x="20" y="0" drill="1" diameter="2"/>
 </package>
 <package name="JST-XH_S4B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="10" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="10" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="10" y1="-2.3" x2="10" y2="9.1" width="0.127" layer="21"/>
 <text x="3.8" y="5" size="1.27" layer="21" font="vector" align="center">JST-XH</text>
-<pad name="PIN3" x="5" y="0" drill="1" diameter="1.75"/>
-<pad name="PIN4" x="7.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN3" x="5" y="0" drill="1" diameter="2"/>
+<pad name="PIN4" x="7.5" y="0" drill="1" diameter="2"/>
 </package>
 <package name="JST-XH_S2B">
-<pad name="PIN1" x="0" y="0" drill="1" diameter="1.75" shape="square"/>
-<pad name="PIN2" x="2.5" y="0" drill="1" diameter="1.75"/>
+<pad name="PIN1" x="0" y="0" drill="1" diameter="2" shape="square"/>
+<pad name="PIN2" x="2.5" y="0" drill="1" diameter="2"/>
 <wire x1="5" y1="9.1" x2="-2.5" y2="9.1" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="9.1" x2="-2.5" y2="-2.3" width="0.127" layer="21"/>
 <wire x1="-2.5" y1="-2.3" x2="5" y2="-2.3" width="0.127" layer="21"/>
