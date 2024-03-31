@@ -2886,26 +2886,6 @@ Operational amplifiers,  comparators, voltage regulators, ADCs, DACs, etc.&lt;p&
 <wire x1="167.64" y1="129.54" x2="142.24" y2="129.54" width="0.1524" layer="91"/>
 <label x="142.24" y="129.54" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
-<segment>
-<pinref part="X4" gate="-2" pin="S"/>
-<wire x1="83.82" y1="38.1" x2="83.82" y2="25.4" width="0.1524" layer="91"/>
-<label x="83.82" y="25.4" size="1.778" layer="95" rot="R270" xref="yes"/>
-</segment>
-<segment>
-<pinref part="X2" gate="-3" pin="S"/>
-<wire x1="38.1" y1="38.1" x2="38.1" y2="35.56" width="0.1524" layer="91"/>
-<label x="38.1" y="35.56" size="1.778" layer="95" rot="R270" xref="yes"/>
-</segment>
-<segment>
-<wire x1="55.88" y1="38.1" x2="55.88" y2="35.56" width="0.1524" layer="91"/>
-<label x="55.88" y="35.56" size="1.778" layer="95" rot="R270" xref="yes"/>
-<pinref part="X3" gate="-3" pin="S"/>
-</segment>
-<segment>
-<wire x1="71.12" y1="38.1" x2="71.12" y2="35.56" width="0.1524" layer="91"/>
-<label x="71.12" y="35.56" size="1.778" layer="95" rot="R270" xref="yes"/>
-<pinref part="X6" gate="-3" pin="S"/>
-</segment>
 </net>
 <net name="SWO" class="0">
 <segment>
@@ -2922,6 +2902,26 @@ Operational amplifiers,  comparators, voltage regulators, ADCs, DACs, etc.&lt;p&
 <junction x="33.02" y="104.14"/>
 <label x="22.86" y="104.14" size="1.778" layer="95" rot="R180" xref="yes"/>
 <pinref part="U$1" gate="G$1" pin="+VS"/>
+</segment>
+<segment>
+<pinref part="X2" gate="-3" pin="S"/>
+<wire x1="38.1" y1="38.1" x2="38.1" y2="35.56" width="0.1524" layer="91"/>
+<label x="38.1" y="35.56" size="1.778" layer="95" rot="R270" xref="yes"/>
+</segment>
+<segment>
+<wire x1="55.88" y1="38.1" x2="55.88" y2="35.56" width="0.1524" layer="91"/>
+<label x="55.88" y="35.56" size="1.778" layer="95" rot="R270" xref="yes"/>
+<pinref part="X3" gate="-3" pin="S"/>
+</segment>
+<segment>
+<wire x1="71.12" y1="38.1" x2="71.12" y2="35.56" width="0.1524" layer="91"/>
+<label x="71.12" y="35.56" size="1.778" layer="95" rot="R270" xref="yes"/>
+<pinref part="X6" gate="-3" pin="S"/>
+</segment>
+<segment>
+<pinref part="X4" gate="-2" pin="S"/>
+<wire x1="83.82" y1="38.1" x2="83.82" y2="25.4" width="0.1524" layer="91"/>
+<label x="83.82" y="25.4" size="1.778" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
 <net name="N$1" class="0">

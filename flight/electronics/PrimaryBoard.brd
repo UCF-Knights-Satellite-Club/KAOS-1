@@ -3,7 +3,7 @@
 <eagle version="9.6.2">
 <drawing>
 <settings>
-<setting alwaysvectorfont="no"/>
+<setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.1" altunitdist="mm" altunit="mm"/>
@@ -3944,10 +3944,10 @@ type 0207, grid 10 mm</description>
 <wire x1="31.752" y1="33.1" x2="42.435" y2="33.1" width="0.127" layer="1"/>
 <wire x1="59" y1="70.39" x2="60.39" y2="69" width="0.127" layer="16"/>
 <wire x1="62.7905" y1="69.7383" x2="62.7905" y2="71.0905" width="0.127" layer="16"/>
-<wire x1="62.7905" y1="71.0905" x2="64.3" y2="72.6" width="0.127" layer="16"/>
-<wire x1="64.3" y1="72.6" x2="69.6" y2="72.6" width="0.127" layer="16"/>
-<wire x1="69.6" y1="72.6" x2="72" y2="70.2" width="0.127" layer="16"/>
-<wire x1="72" y1="70.2" x2="72" y2="49.805" width="0.127" layer="16"/>
+<wire x1="62.7905" y1="71.0905" x2="64.4" y2="72.7" width="0.127" layer="16"/>
+<wire x1="64.4" y1="72.7" x2="70" y2="72.7" width="0.127" layer="16"/>
+<wire x1="70" y1="72.7" x2="72" y2="70.7" width="0.127" layer="16"/>
+<wire x1="72" y1="70.7" x2="72" y2="49.805" width="0.127" layer="16"/>
 <wire x1="60.39" y1="69" x2="62.0522" y2="69" width="0.127" layer="16"/>
 <wire x1="62.0522" y1="69" x2="62.7905" y2="69.7383" width="0.127" layer="16"/>
 <contactref element="U$2" pad="SCL"/>
@@ -3960,12 +3960,12 @@ type 0207, grid 10 mm</description>
 <wire x1="25.906" y1="24.714" x2="31.692" y2="30.5" width="0.127" layer="1"/>
 <wire x1="48.74" y1="36.885" x2="42.355" y2="30.5" width="0.127" layer="1"/>
 <wire x1="31.692" y1="30.5" x2="42.355" y2="30.5" width="0.127" layer="1"/>
-<wire x1="63.41" y1="73.4" x2="61.5" y2="71.49" width="0.127" layer="16"/>
+<wire x1="63.51" y1="73.5" x2="61.5" y2="71.49" width="0.127" layer="16"/>
 <wire x1="61.5" y1="70.39" x2="61.5" y2="71.49" width="0.127" layer="16"/>
-<wire x1="69.8" y1="73.4" x2="73" y2="70.2" width="0.127" layer="16"/>
-<wire x1="73" y1="70.2" x2="73" y2="49.145" width="0.127" layer="16"/>
+<wire x1="70.3" y1="73.5" x2="73" y2="70.8" width="0.127" layer="16"/>
+<wire x1="73" y1="70.8" x2="73" y2="49.145" width="0.127" layer="16"/>
 <wire x1="68.81" y1="44.955" x2="73" y2="49.145" width="0.127" layer="16"/>
-<wire x1="63.41" y1="73.4" x2="69.8" y2="73.4" width="0.127" layer="16"/>
+<wire x1="63.51" y1="73.5" x2="70.3" y2="73.5" width="0.127" layer="16"/>
 <contactref element="U$2" pad="SDA"/>
 <contactref element="X1" pad="PIN4"/>
 <contactref element="ESP32" pad="11"/>
@@ -3990,16 +3990,15 @@ type 0207, grid 10 mm</description>
 <wire x1="62" y1="48.005" x2="48.34" y2="34.345" width="0.127" layer="16"/>
 </signal>
 <signal name="GPIO1">
-<wire x1="69.4517" y1="71.7805" x2="70.4905" y2="70.7417" width="0.127" layer="16"/>
-<wire x1="70.4905" y1="70.7417" x2="70.4905" y2="69.3383" width="0.127" layer="16"/>
-<wire x1="64" y1="62.8478" x2="64" y2="47" width="0.127" layer="16"/>
+<wire x1="69.7517" y1="71.8805" x2="70.4905" y2="71.1417" width="0.127" layer="16"/>
+<wire x1="70.4905" y1="71.1417" x2="70.4905" y2="69.3383" width="0.127" layer="16"/>
+<wire x1="64" y1="62.8478" x2="64" y2="46.885" width="0.127" layer="16"/>
 <wire x1="70.4905" y1="69.3383" x2="64" y2="62.8478" width="0.127" layer="16"/>
-<wire x1="64" y1="70.39" x2="65.3905" y2="71.7805" width="0.127" layer="16"/>
-<wire x1="65.3905" y1="71.7805" x2="69.4517" y2="71.7805" width="0.127" layer="16"/>
+<wire x1="64" y1="70.39" x2="65.4905" y2="71.8805" width="0.127" layer="16"/>
+<wire x1="65.4905" y1="71.8805" x2="69.7517" y2="71.8805" width="0.127" layer="16"/>
 <contactref element="X1" pad="PIN5"/>
 <contactref element="ESP32" pad="25"/>
 <wire x1="41.3" y1="24.185" x2="64" y2="46.885" width="0.127" layer="16"/>
-<wire x1="64" y1="46.885" x2="64" y2="47" width="0.127" layer="16"/>
 </signal>
 <signal name="VSPI_CLK">
 <wire x1="18.5" y1="70.39" x2="19.89" y2="69" width="0.127" layer="1"/>
@@ -4057,16 +4056,15 @@ type 0207, grid 10 mm</description>
 <wire x1="67" y1="76" x2="16.61" y2="76" width="0.1524" layer="1"/>
 </signal>
 <signal name="ARDUCAM-A_CS">
-<wire x1="32.5" y1="70.39" x2="36.31" y2="74.2" width="0.127" layer="16"/>
-<wire x1="69.9" y1="74.2" x2="74" y2="70.1" width="0.127" layer="16"/>
-<wire x1="74" y1="70.1" x2="74" y2="48.605" width="0.127" layer="16"/>
+<wire x1="32.5" y1="70.39" x2="36.41" y2="74.3" width="0.127" layer="16"/>
+<wire x1="70.6" y1="74.3" x2="74" y2="70.9" width="0.127" layer="16"/>
+<wire x1="74" y1="70.9" x2="74" y2="48.605" width="0.127" layer="16"/>
 <wire x1="74" y1="48.605" x2="69.81" y2="44.415" width="0.127" layer="16"/>
-<wire x1="69.81" y1="44.415" x2="69.81" y2="25" width="0.127" layer="16"/>
-<wire x1="36.31" y1="74.2" x2="69.9" y2="74.2" width="0.127" layer="16"/>
+<wire x1="69.81" y1="44.415" x2="69.81" y2="24.755" width="0.127" layer="16"/>
+<wire x1="36.41" y1="74.3" x2="70.6" y2="74.3" width="0.127" layer="16"/>
 <contactref element="ARDUCAM-A" pad="PIN1"/>
 <contactref element="ESP32" pad="5"/>
 <wire x1="66.7" y1="21.645" x2="69.81" y2="24.755" width="0.127" layer="16"/>
-<wire x1="69.81" y1="24.755" x2="69.81" y2="25" width="0.127" layer="16"/>
 </signal>
 <signal name="SD_CS">
 <wire x1="31.256" y1="57.35" x2="34" y2="54.606" width="0.127" layer="16"/>
