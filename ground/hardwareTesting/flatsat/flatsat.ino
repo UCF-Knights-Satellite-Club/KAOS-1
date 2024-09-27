@@ -14,6 +14,7 @@
 // Change SD to HSPI Bus
 // Update Chip Select pins for everything
 // Add analog read of the battery and thermistor
+// Create folder for each run
 
 Adafruit_SCD30  scd30;
 Adafruit_BMP3XX bmp;
