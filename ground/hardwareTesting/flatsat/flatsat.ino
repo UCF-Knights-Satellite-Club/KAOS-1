@@ -10,15 +10,22 @@
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
+//#define CAM_A_CS 4
+//#define CAM_B_CS 5
+#define SD_CS 15
+#define SCD_RDY 27
+
 // TODO:
-// Change SD to HSPI Bus
-// Update Chip Select pins for everything
 // Add analog read of the battery and thermistor
 // Create folder for each run
+// Add camera code
 
 Adafruit_SCD30  scd30;
 Adafruit_BMP3XX bmp;
 RTC_DS1307 rtc;
+
+//SPIClass *vspi;
+SPIClass *hspi;
 
 bool data_ready = false;
 
@@ -27,11 +34,19 @@ void IRAM_ATTR scd30_ready() {
 }
 
 void setup() {
+  //vspi = new SPIClass(VSPI);
+  hspi = new SPIClass(HSPI);
+
+  Wire.begin();
+
+
+
   Serial.begin(115200);
   while (!Serial);
   Serial.println("UCF KSC Test Logger");
 
   // BMP388 SETUP
+  Serial.println("Setting up BMP sensor");
   if (!bmp.begin_I2C()) {
     Serial.println("Could not find a valid BMP3 sensor.");
     return;
@@ -42,19 +57,22 @@ void setup() {
   bmp.setOutputDataRate(BMP3_ODR_50_HZ);
 
   // SCD30 SETUP
+  Serial.println("Setting up SCD30");
   if (!scd30.begin()) {
     Serial.println("Failed to find SCD30 chip");
     return;
   }
 
   // RTC SETUP
+  Serial.println("Setting up RTC");
   if (!rtc.begin()) {
     Serial.println("Couldn't find RTC");
     return;
   }
 
   // SD CARD SETUP
-  if(!SD.begin()){
+  Serial.println("Setting up SD card");
+  if(!SD.begin(SD_CS, *hspi)){
     Serial.println("Card Mount Failed");
     return;
   }
@@ -66,8 +84,8 @@ void setup() {
   }
 
   // Configure SCD30 RDY interrupt
-  pinMode(17, INPUT_PULLDOWN);
-  attachInterrupt(17, scd30_ready, RISING);
+  pinMode(SCD_RDY, INPUT_PULLDOWN);
+  attachInterrupt(SCD_RDY, scd30_ready, RISING);
 }
 
 void loop() {
