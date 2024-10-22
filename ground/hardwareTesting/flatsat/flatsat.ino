@@ -14,6 +14,8 @@
 //#define CAM_B_CS 5
 #define SD_CS 15
 #define SCD_RDY 27
+#define VBAT_ADC 34
+#define TEMP_ADC 33
 
 // TODO:
 // Add analog read of the battery and thermistor
@@ -28,6 +30,7 @@ RTC_DS1307 rtc;
 SPIClass *hspi;
 
 bool data_ready = false;
+
 
 void IRAM_ATTR scd30_ready() {
   data_ready = true;
@@ -120,7 +123,7 @@ void loop() {
   file.print(now.second());
   file.print(",");
 
-  // temp
+  // bmp temp (internal)
   file.print(bmp.temperature);
   file.print(",");
   Serial.print("Temp_(C):");
@@ -153,7 +156,21 @@ void loop() {
   file.println();
   Serial.print("CO2_(ppm):");
   Serial.print(scd30.CO2, 3);
-  Serial.println();
+  Serial.print(",");
+
+  // thermistor temp (external)
+  float thermistor_raw = analogRead(TEMP_ADC);
+  thermistor_raw = 10000 / ((4095 / thermistor_raw) - 1);
+  Serial.print("Thermistor_(Ohms):");
+  Serial.print(thermistor_raw, 3);
+  Serial.print(",");
+
+  // battery voltage
+  float vbat_raw = analogRead(VBAT_ADC);
+  float vbat = 3 * vbat_raw * 2.450 / 4095;
+  Serial.print("Battery_(V):");
+  Serial.print(vbat);
+  Serial.println(); 
 
   file.close();
   
