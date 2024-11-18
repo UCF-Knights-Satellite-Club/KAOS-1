@@ -7,11 +7,14 @@
 #include "SD.h"
 #include "SPI.h"
 #include "RTClib.h"
+#include "Arducam_Mega.h"
+#include "Arducam/Platform.h"
 
 #define SEALEVELPRESSURE_HPA (1013.25)
+#define PIC_BUFFER_SIZE  0xff
 
-//#define CAM_A_CS 4
-//#define CAM_B_CS 5
+#define CAM_A_CS 4
+#define CAM_B_CS 5
 #define SD_CS 15
 #define SCD_RDY 27
 #define VBAT_ADC 34
@@ -22,21 +25,84 @@
 // Create folder for each run
 // Add camera code
 
-Adafruit_SCD30  scd30;
+Adafruit_SCD30 scd30;
 Adafruit_BMP3XX bmp;
 RTC_DS1307 rtc;
+
+Arducam_Mega camA(CAM_A_CS);
+Arducam_Mega camB(CAM_B_CS);
 
 //SPIClass *vspi;
 SPIClass *hspi;
 
 bool data_ready = false;
+int pic_num = 0;
+char base_dir[20];
 
 
 void IRAM_ATTR scd30_ready() {
   data_ready = true;
 }
 
+void write_pic(Arducam_Mega &cam, File dest) {
+
+  uint8_t count = 1;
+  uint8_t prev_byte = 0;
+  uint8_t cur_byte = 0;
+  uint8_t head_flag = 0;
+  unsigned int i = 0;
+  uint8_t image_buf[PIC_BUFFER_SIZE] = {0};
+
+  while (cam.getReceivedLength())
+  {
+    // Store current and previous byte
+    prev_byte = cur_byte;
+    cur_byte = cam.readByte();
+
+    // Write data to buffer
+    if (head_flag == 1)
+    {
+      image_buf[i++]=cur_byte;
+      // When buffer is full, write to file
+      if (i >= PIC_BUFFER_SIZE)
+      {
+        dest.write(image_buf, i);
+        i = 0;
+      }
+    }
+    // Initialize file on JPEG file start (0xFFD8)
+    if (prev_byte == 0xff && cur_byte == 0xd8)
+    {
+      head_flag = 1;
+      //sprintf(name,"/%d.jpg", count);
+      count++;
+      //Serial.print(F("Saving image..."));
+      image_buf[i++]=prev_byte;
+      image_buf[i++]=cur_byte;
+    }
+    // Close file on JPEG file ending (0xFFD9)
+    if (prev_byte == 0xff && cur_byte == 0xd9)
+    {
+      //headFlag = 0;
+      dest.write(image_buf, i);
+      //i = 0;
+      dest.close();
+      Serial.println(F("Done"));
+      break;
+    }
+  }
+}
+
 void setup() {
+  // Disable all CS lines
+  pinMode(SD_CS, OUTPUT);
+  digitalWrite(SD_CS, HIGH);
+  pinMode(CAM_A_CS, OUTPUT);
+  digitalWrite(CAM_A_CS, HIGH);
+  pinMode(CAM_B_CS, OUTPUT);
+  digitalWrite(CAM_B_CS, HIGH);
+
+
   //vspi = new SPIClass(VSPI);
   hspi = new SPIClass(HSPI);
 
@@ -73,6 +139,12 @@ void setup() {
     return;
   }
 
+  // Camera setup
+  Serial.println("Initializing ArduCam A");
+  camA.begin();
+  Serial.println("Initializing ArduCam B");
+  camB.begin();
+
   // SD CARD SETUP
   Serial.println("Setting up SD card");
   if(!SD.begin(SD_CS, *hspi)){
@@ -86,13 +158,26 @@ void setup() {
     return;
   }
 
+  // Pick base dir
+  int i = 0;
+  do {
+    sprintf(base_dir, "/kaoslog%d", i);
+    i++;
+  } while (SD.exists(base_dir));
+  SD.mkdir(base_dir);
+  Serial.print("Data from this run stored in ");
+  Serial.println(base_dir);
+
   // Configure SCD30 RDY interrupt
   pinMode(SCD_RDY, INPUT_PULLDOWN);
   attachInterrupt(SCD_RDY, scd30_ready, RISING);
 }
 
 void loop() {
+  // Wait for RDY interrupt then reset flag
   while(!data_ready) { delay(10); }
+  data_ready = false;
+
   if (! scd30.read()) { Serial.println("Error reading SCD30 data"); return; }
   if (! bmp.performReading()) { Serial.println("Error reading BMP388 data"); return; }
   if (! rtc.isrunning()) {
@@ -100,11 +185,17 @@ void loop() {
     rtc.adjust(DateTime(2023, 1, 1, 0, 0, 0));
   }
 
-  File file = SD.open("/datalog.csv", FILE_APPEND);
+  char fp[35];
+  sprintf(fp, "%s/flight_log.csv", base_dir);
+  File file = SD.open(fp, FILE_APPEND);
   if(!file){
     Serial.println("Failed to open file for appending");
     return;
   }
+
+  // take pictures
+  camA.takePicture(CAM_IMAGE_MODE_WQXGA2,CAM_IMAGE_PIX_FMT_JPG);
+  camB.takePicture(CAM_IMAGE_MODE_WQXGA2,CAM_IMAGE_PIX_FMT_JPG);
 
   // date
   DateTime now = rtc.now();
@@ -173,6 +264,16 @@ void loop() {
   Serial.println(); 
 
   file.close();
-  
-  data_ready = false;
+
+  // Save cam A pic
+  sprintf(fp, "%s/a%d.jpg", base_dir, pic_num);
+  file = SD.open(fp, FILE_WRITE);
+  write_pic(camA, file);
+
+  // Save cam B pic
+  sprintf(fp, "%s/b%d.jpg", base_dir, pic_num);
+  file = SD.open(fp, FILE_WRITE);
+  write_pic(camB, file);
+
+  pic_num++;
 }
