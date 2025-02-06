@@ -21,9 +21,10 @@
 #define TEMP_ADC 33
 
 // TODO:
-// Add analog read of the battery and thermistor
-// Create folder for each run
-// Add camera code
+// Calculate temperature from voltage reading on thermistor
+// Copy multitasking form T-Sat-0 FSW
+// Add buzzer code
+// Figure out flight states (state machine)
 
 Adafruit_SCD30 scd30;
 Adafruit_BMP3XX bmp;
