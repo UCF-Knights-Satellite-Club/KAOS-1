@@ -190,7 +190,7 @@ void setup() {
     // Pick base directory for this flight
     int i = 0;
     do {
-      sprintf(base_dir, "/tsatlog%d", i);
+      sprintf(base_dir, "/KAOS-log%d", i);
       i++;
     } while (SD.exists(base_dir));
     SD.mkdir(base_dir);
