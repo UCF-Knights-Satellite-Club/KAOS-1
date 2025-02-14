@@ -1,17 +1,24 @@
-#include <Wire.h>
-#include <Adafruit_MMA8451.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BMP3XX.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <Arducam_Mega.h>
-#include <Arducam/Platform.h>
-#include <SPI.h>
-#include <FS.h>
-#include <SD.h>
-#include <ESP32Servo.h>
-#include <SD.h>
-#include <SPI.h>
+//Including the libraries that we will be using in the code
+#include <Wire.h>               //Allows communication between Arduino and the other devices
+
+//Libraries for sensor use and data collection
+#include <Adafruit_MMA8451.h>   //Library for the accelerometer
+#include <Adafruit_Sensor.h>    //Gives a unified interface for a bunch of adafruit sensors
+#include <Adafruit_BMP3XX.h>    //Library for the barometer
+#include <Adafruit_GFX.h>       //Library used to draw shaped, texts, etc 
+#include <Adafruit_SSD1306.h>   //Library for controlling the OLED display
+
+//Libraries for the camera and interface with the camera
+#include <Arducam_Mega.h>       //Library for interface with the Camera 
+#include <Arducam/Platform.h> 
+
+//Libraries for data storage and transfer
+#include <SPI.h>                //Library for data transfer
+#include <FS.h>                 //Library that provides file operations for storage on the SD card
+#include <SD.h>                 //Library used for interfacing with SD cards
+
+#include <ESP32Servo.h>         //Library to help control the servo motors 
+
 
 // Pin constants
 #define CAM_CS 17
