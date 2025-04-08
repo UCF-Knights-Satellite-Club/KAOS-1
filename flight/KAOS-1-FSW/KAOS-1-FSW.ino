@@ -17,8 +17,6 @@
 #include <FS.h>                 //Library that provides file operations for storage on the SD card
 #include <SD.h>                 //Library used for interfacing with SD cards
 
-#include <ESP32Servo.h>         //Library to help control the servo motors 
-
 
 // Pin constants
 #define CAM_CS 17
@@ -26,7 +24,7 @@
 #define MISO 12
 #define MOSI 13
 #define SD_CS 15
-#define SERVO_PIN 4
+
 
 // Depending on the selected board, may or may not be defined already
 #ifndef LED_BUILTIN
@@ -50,8 +48,7 @@
 #define PARACHUTE_DEPLOY_ALTITUDE 80          // altutude to switch from FREEFALL to LANDING
 #define ALTITUDE_DELTA_FILTER_GAIN 0.95       // between 0 and 1, higher number means each measurement has lower impact on estimate
 #define ACCEL_FILTER_GAIN 0.5                 // same as altitude
-#define SERVO_STOW_POS 110                    // initial servo position
-#define SERVO_DEPLOY_POS 180                  // parachute deploy position
+
 
 // Define TEST_MODE to enable test mode
 // #define TEST_MODE
@@ -61,7 +58,7 @@ Adafruit_MMA8451 mma = Adafruit_MMA8451();
 Adafruit_BMP3XX bmp;
 Adafruit_SSD1306 display(128, 64, &Wire, -1);  // select reset pin (just set to any unused pin)
 Arducam_Mega cam(CAM_CS);
-Servo servo;
+
 
 // Function definitions
 void write_pic(Arducam_Mega &cam, File dest);
@@ -163,9 +160,7 @@ void setup() {
   // Preload data into bmp
   bmp.performReading();
 
-  // init servo
-  servo.attach(SERVO_PIN);
-  servo.write(SERVO_STOW_POS);
+
 
   // init ArduCam, must be done before SD setup so CS lines are configured properly
   cam.begin();
@@ -625,7 +620,7 @@ void freefallRun() {
     flight_state = LANDING;
 
     Serial.println("Parachute deployment altitude reached, moving to LANDING");
-    servo.write(SERVO_DEPLOY_POS);
+
   }
 }
 
