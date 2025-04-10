@@ -18,13 +18,13 @@
 #include <SD.h>                 //Library used for interfacing with SD cards
 
 
-// Pin constants
-#define CAM_CS 17
-#define SCK 14
-#define MISO 12
-#define MOSI 13
-#define SD_CS 15
-
+// Pin constants, unsure if correct, but labeling what i can find in the wiki
+#define CAM_CS 17 // not real???
+#define SCK 14 // HSPI CLK
+#define MISO 12 //HSPI MISO
+#define MOSI 13 //HSPI MOSI
+#define SD_CS 15 // SD CARD CHIP SELECT
+#define BUZZER_PIN 25 // Piezoelectric buzzer
 
 // Depending on the selected board, may or may not be defined already
 #ifndef LED_BUILTIN
@@ -48,7 +48,7 @@
 #define PARACHUTE_DEPLOY_ALTITUDE 80          // altutude to switch from FREEFALL to LANDING
 #define ALTITUDE_DELTA_FILTER_GAIN 0.95       // between 0 and 1, higher number means each measurement has lower impact on estimate
 #define ACCEL_FILTER_GAIN 0.5                 // same as altitude
-
+#define BUZZER_INTERVAL 500                   // the buzzers delay
 
 // Define TEST_MODE to enable test mode
 // #define TEST_MODE
@@ -256,7 +256,14 @@ void setup() {
 
   // LED off once setup complete
   digitalWrite(LED_BUILTIN, LOW);
+  
+  
+  // BUZZER PINMODE 
+  pinMode(BUZZER_PIN, OUTPUT);
+
 }
+
+
 
 // Empty loop function, all functionality in custom tasks
 void loop() {
@@ -625,7 +632,29 @@ void freefallRun() {
 }
 
 void landingRun() {
-  // Deploy parachute, no more state changes
+  // Deploy parachute, buzzer loop, last stage of flight
+static unsigned long previousmillis = 0;
+unsigned long currentmillis = millis(); // checks and updates time value for the upcoming calculations
+
+if (currentmillis - previousmillis >= BUZZER_INTERVAL) {
+  previousmillis =  currentmillis; // updates previousmillis for the next run
+
+  static bool buzzer_on = false;
+
+  // below if statement will turn the buzzer on if buzzer_on is false.
+  
+  if(buzzer_on) {
+    noTone(BUZZER_PIN);
+  }
+  else {
+    tone(BUZZER_PIN, 1000); 
+  }
+
+  buzzer_on = !buzzer_on; // changes state for next run  
+
+  }
+}
+
 }
 
 /* ================================= */
