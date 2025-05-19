@@ -68,7 +68,7 @@
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
 Adafruit_BMP3XX bmp;
 Adafruit_SSD1306 display(128, 64, &Wire, -1);  // select reset pin (just set to any unused pin)
-Arducam_Mega cam(CAM_CS);
+Arducam_Mega cam(CAM_CS_A);
 
 
 // Function definitions
