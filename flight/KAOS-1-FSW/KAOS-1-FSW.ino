@@ -19,11 +19,22 @@
 
 
 // Pin constants
-#define CAM_CS 17
-#define SCK 14
-#define MISO 12
-#define MOSI 13
-#define SD_CS 15
+#define CAM_CS_A      4
+#define CAM_CS_B      5
+#define HSPI_MISO     12
+#define HSPI_MOSI     13
+#define HSPI_CLK      14
+#define SD_CS         15
+#define VSPI_CLK      18
+#define VSPI_MISO     19
+#define I2C_SDA       21
+#define I2C_SCL       22
+#define VSPI_MOSI     23
+#define BUZZER_PIN    25
+#define SCD30_RDY     27
+#define BMP388_INT    32
+#define THERMISTOR    33
+#define BATT_VOLTAGE  34
 
 
 // Depending on the selected board, may or may not be defined already
