@@ -10,8 +10,9 @@ This project utilizes the Arduino ecosystem on a **DOIT ESP32 DEVKIT V1**. Unles
 ### Prerequisites
 - **Arduino ESP32 Core** ([installation instructions](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html))
 - **Adafruit BMP3XX Library** by Adafruit
-- **Adafruit SCD-30** by Adafruit
+- **Adafruit SCD30** by Adafruit
 - **RTClib** by Adafruit
+- **Adafruit MMA8451 Library** by Adafruit
 - **Arducam_Mega** by Arducam
 
 ### Explanation
