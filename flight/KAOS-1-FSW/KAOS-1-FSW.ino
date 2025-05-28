@@ -1,40 +1,40 @@
 //Including the libraries that we will be using in the code
-#include <Wire.h>               //Allows communication between Arduino and the other devices
+#include <Wire.h>  //Allows communication between Arduino and the other devices
 
 //Libraries for sensor use and data collection
-#include <Adafruit_MMA8451.h>   //Library for the accelerometer
-#include <Adafruit_Sensor.h>    //Gives a unified interface for a bunch of adafruit sensors
-#include <Adafruit_BMP3XX.h>    //Library for the barometer
-#include <Adafruit_GFX.h>       //Library used to draw shaped, texts, etc 
-#include <Adafruit_SSD1306.h>   //Library for controlling the OLED display
+#include <Adafruit_MMA8451.h>  //Library for the accelerometer
+#include <Adafruit_Sensor.h>   //Gives a unified interface for a bunch of adafruit sensors
+#include <Adafruit_BMP3XX.h>   //Library for the barometer
+#include <Adafruit_GFX.h>      //Library used to draw shaped, texts, etc
+#include <Adafruit_SSD1306.h>  //Library for controlling the OLED display
 
 //Libraries for the camera and interface with the camera
-#include <Arducam_Mega.h>       //Library for interface with the Camera 
-#include <Arducam/Platform.h> 
+#include <Arducam_Mega.h>  //Library for interface with the Camera
+#include <Arducam/Platform.h>
 
 //Libraries for data storage and transfer
-#include <SPI.h>                //Library for data transfer
-#include <FS.h>                 //Library that provides file operations for storage on the SD card
-#include <SD.h>                 //Library used for interfacing with SD cards
+#include <SPI.h>  //Library for data transfer
+#include <FS.h>   //Library that provides file operations for storage on the SD card
+#include <SD.h>   //Library used for interfacing with SD cards
 
 
 // Pin constants
-#define CAM_CS_A      4
-#define CAM_CS_B      5
-#define HSPI_MISO     12
-#define HSPI_MOSI     13
-#define HSPI_CLK      14
-#define SD_CS         15
-#define VSPI_CLK      18
-#define VSPI_MISO     19
-#define I2C_SDA       21
-#define I2C_SCL       22
-#define VSPI_MOSI     23
-#define BUZZER_PIN    25
-#define SCD30_RDY     27
-#define BMP388_INT    32
-#define THERMISTOR    33
-#define BATT_VOLTAGE  34
+#define CAM_CS_A 4
+#define CAM_CS_B 5
+#define HSPI_MISO 12
+#define HSPI_MOSI 13
+#define HSPI_CLK 14
+#define SD_CS 15
+#define VSPI_CLK 18
+#define VSPI_MISO 19
+#define I2C_SDA 21
+#define I2C_SCL 22
+#define VSPI_MOSI 23
+#define BUZZER_PIN 25
+#define SCD30_RDY 27
+#define BMP388_INT 32
+#define THERMISTOR 33
+#define BATT_VOLTAGE 34
 
 
 // Depending on the selected board, may or may not be defined already
@@ -59,6 +59,12 @@
 #define PARACHUTE_DEPLOY_ALTITUDE 80          // altutude to switch from FREEFALL to LANDING
 #define ALTITUDE_DELTA_FILTER_GAIN 0.95       // between 0 and 1, higher number means each measurement has lower impact on estimate
 #define ACCEL_FILTER_GAIN 0.5                 // same as altitude
+#define THERMISTORNOMINAL 10000               // resistance at 25 degrees C of thermistor
+#define TEMPERATURENOMINAL 25                 // temp. for nominal resistance of thermistor (almost always 25 C)
+#define NUMSAMPLES 5                          // how many samples to take and average for the thermistor
+#define BCOEFFICIENT 3950                     // The beta coefficient of the thermistor (usually 3000-4000)
+#define SERIESRESISTOR 10000                  // the value of the 'other' resistor connected to the thermistor
+
 
 
 // Define TEST_MODE to enable test mode
@@ -81,8 +87,9 @@ void landingRun();
 void checkAltitude(void *parameter);
 void cameraCapture(void *parameter);
 void logData(void *parameter);
+float Tempreading()
 
-// Globals
+  // Globals
 static TaskHandle_t check_altitude;
 static TaskHandle_t log_data;
 static TaskHandle_t camera_capture;
@@ -142,12 +149,12 @@ void setup() {
   // init serial
   Serial.begin(115200);
 
-  // setup OLED if test mode is enabled
-  #ifdef TEST_MODE
-    display.begin(SSD1306_SWITCHCAPVCC, 0x3c);  // i2c address
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-  #endif
+// setup OLED if test mode is enabled
+#ifdef TEST_MODE
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3c);  // i2c address
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+#endif
 
   // setup MMA
   if (!mma.begin()) {
@@ -241,8 +248,7 @@ void setup() {
     NULL,
     tskIDLE_PRIORITY,  // Lowest possible priority, see https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/01-Tasks-and-co-routines/15-Idle-task
     &camera_capture,
-    0
-  );
+    0);
 
   // Create task for logging data to SD
   xTaskCreatePinnedToCore(
@@ -252,8 +258,7 @@ void setup() {
     NULL,
     1,
     &log_data,
-    0
-  );
+    0);
 
   // Delay to stop first image from being green
   vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -276,8 +281,8 @@ void loop() {
 
 // Periodically monitors sensor data and performs state switches
 void checkAltitude(void *parameter) {
-  vTaskSuspend(NULL); // Initially suspend task
-  
+  vTaskSuspend(NULL);  // Initially suspend task
+
   TickType_t last_wake = xTaskGetTickCount();
 
   while (1) {
@@ -379,50 +384,50 @@ void checkAltitude(void *parameter) {
       logindex++;
     }
 
-    #ifdef TEST_MODE
-      // display code:
-      display.clearDisplay();
-      display.drawRoundRect(0, 0, 128, 64, 8, WHITE);
-      display.setRotation(2);
-      display.setCursor(15, 3);
-      if (flight_state != CALIBRATION) {
-        display.setCursor(altitude >= 0 ? 22 : 10, 8);
-        display.print(altitude);
-      } else {
-        display.setCursor(absolute_altitude >= 0 ? 22 : 10, 8);
-        display.print(absolute_altitude);
-      }
-      display.print(" m");
-      display.setCursor(altitude_delta_estimate >= 0 ? 22 : 10, 28);
-      display.print(altitude_delta_estimate * 1000 / ALTITUDE_CHECK_DELAY);
-      display.print(" m/s");
+#ifdef TEST_MODE
+    // display code:
+    display.clearDisplay();
+    display.drawRoundRect(0, 0, 128, 64, 8, WHITE);
+    display.setRotation(2);
+    display.setCursor(15, 3);
+    if (flight_state != CALIBRATION) {
+      display.setCursor(altitude >= 0 ? 22 : 10, 8);
+      display.print(altitude);
+    } else {
+      display.setCursor(absolute_altitude >= 0 ? 22 : 10, 8);
+      display.print(absolute_altitude);
+    }
+    display.print(" m");
+    display.setCursor(altitude_delta_estimate >= 0 ? 22 : 10, 28);
+    display.print(altitude_delta_estimate * 1000 / ALTITUDE_CHECK_DELAY);
+    display.print(" m/s");
 
-      display.setCursor(10, 48);
-      switch (flight_state) {
-        case CALIBRATION:
-          display.print("CALIBRATE");
-          break;
-        case PREFLIGHT:
-          display.print("PREFLIGHT");
-          break;
-        case ASCENT:
-          display.print("ASCENT");
-          break;
-        case FREEFALL:
-          display.print("FREEFALL");
-          break;
-        case LANDING:
-          display.print("LANDING");
-          break;
-      }
-      display.display();
-    #endif
+    display.setCursor(10, 48);
+    switch (flight_state) {
+      case CALIBRATION:
+        display.print("CALIBRATE");
+        break;
+      case PREFLIGHT:
+        display.print("PREFLIGHT");
+        break;
+      case ASCENT:
+        display.print("ASCENT");
+        break;
+      case FREEFALL:
+        display.print("FREEFALL");
+        break;
+      case LANDING:
+        display.print("LANDING");
+        break;
+    }
+    display.display();
+#endif
     vTaskDelayUntil(&last_wake, ALTITUDE_CHECK_DELAY / portTICK_PERIOD_MS);
   }
 }
 
 void cameraCapture(void *parameter) {
-  vTaskSuspend(NULL); // Initially suspend task
+  vTaskSuspend(NULL);  // Initially suspend task
   while (1) {
     Serial.println("Taking picture");
     cam.takePicture(CAM_IMAGE_MODE, CAM_IMAGE_PIX_FMT_JPG);
@@ -441,7 +446,7 @@ void cameraCapture(void *parameter) {
 }
 
 void logData(void *parameter) {
-  vTaskSuspend(NULL); // Initially suspend task
+  vTaskSuspend(NULL);  // Initially suspend task
   while (1) {
     if (uxQueueMessagesWaiting(log_queue) > 0) {
       if (xSemaphoreTake(spi_mutex, SPI_MUTEX_WAIT) == pdTRUE) {
@@ -631,7 +636,6 @@ void freefallRun() {
     flight_state = LANDING;
 
     Serial.println("Parachute deployment altitude reached, moving to LANDING");
-
   }
 }
 
@@ -640,3 +644,43 @@ void landingRun() {
 }
 
 /* ================================= */
+}
+
+float Tempreading() {
+  int samples[NUMSAMPLES];
+  uint8_t i;
+  float average;
+
+  // take N samples in a row, with a slight delay
+  for (i = 0; i < NUMSAMPLES; i++) {
+    samples[i] = analogRead(THERMISTORPIN);
+    delay(10);
+  }
+  // average all the samples out
+  average = 0;
+  for (i = 0; i < NUMSAMPLES; i++) {
+    average += samples[i];
+  }
+  average /= NUMSAMPLES;
+
+  Serial.print("Average analog reading ");
+  Serial.println(average);
+
+  // convert the value to resistance
+  average = 1023 / average - 1;
+  average = SERIESRESISTOR / average;
+  Serial.print("Thermistor resistance ");
+  Serial.println(average);
+
+  float steinhart;
+  steinhart = average / THERMISTORNOMINAL;           // (R/Ro)
+  steinhart = log(steinhart);                        // ln(R/Ro)
+  steinhart /= BCOEFFICIENT;                         // 1/B * ln(R/Ro)
+  steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15);  // + (1/To)
+  steinhart = 1.0 / steinhart;                       // Invert
+  steinhart -= 273.15;                               // convert absolute temp to C
+  Serial.print("Temperature ");
+  Serial.print(steinhart);
+  Serial.println(" *C");
+  delay(10);
+}
