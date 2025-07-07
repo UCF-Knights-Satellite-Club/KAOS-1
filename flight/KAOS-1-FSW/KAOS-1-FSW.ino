@@ -2,8 +2,8 @@
 #include <Wire.h>  //Allows communication between Arduino and the other devices
 
 //Libraries for sensor use and data collection
-#include <Adafruit_Sensor.h>   //Gives a unified interface for a bunch of adafruit sensors
-#include <Adafruit_BMP3XX.h>   //Library for the barometer
+#include <Adafruit_Sensor.h>  //Gives a unified interface for a bunch of adafruit sensors
+#include <Adafruit_BMP3XX.h>  //Library for the barometer
 
 //Libraries for the camera and interface with the camera
 #include <Arducam_Mega.h>  //Library for interface with the Camera
@@ -82,9 +82,9 @@ void landingRun();
 void checkAltitude(void *parameter);
 void cameraCapture(void *parameter);
 void logData(void *parameter);
-float Tempreading()
+float Tempreading();
 
-  // Globals
+// Globals
 static TaskHandle_t check_altitude;
 static TaskHandle_t log_data;
 static TaskHandle_t camera_capture;
@@ -161,7 +161,7 @@ void setup() {
   hspi = new SPIClass(HSPI);
 
   Wire.begin();
-  i2c_set_timeout((i2c_port_t)I2C_NUM_0, 0xFFFFF);
+  //i2c_set_timeout((i2c_port_t)I2C_NUM_0, 0xFFFFF);
 
 
 
@@ -316,6 +316,8 @@ void checkAltitude(void *parameter) {
 
   TickType_t last_wake = xTaskGetTickCount();
 
+
+
   while (1) {
     /*
     Serial.print("absolute alt: ");
@@ -354,6 +356,8 @@ void checkAltitude(void *parameter) {
 
 
     accel_magnitude = sqrtf(accel_x_estimate * accel_x_estimate + accel_y_estimate * accel_y_estimate + accel_z_estimate * accel_z_estimate);
+
+    Tempreading();
 
     /*
     Serial.print("accel:");
@@ -414,48 +418,9 @@ void checkAltitude(void *parameter) {
 
       logindex++;
     }
-
-#ifdef TEST_MODE
-    // display code:
-    display.clearDisplay();
-    display.drawRoundRect(0, 0, 128, 64, 8, WHITE);
-    display.setRotation(2);
-    display.setCursor(15, 3);
-    if (flight_state != CALIBRATION) {
-      display.setCursor(altitude >= 0 ? 22 : 10, 8);
-      display.print(altitude);
-    } else {
-      display.setCursor(absolute_altitude >= 0 ? 22 : 10, 8);
-      display.print(absolute_altitude);
-    }
-    display.print(" m");
-    display.setCursor(altitude_delta_estimate >= 0 ? 22 : 10, 28);
-    display.print(altitude_delta_estimate * 1000 / ALTITUDE_CHECK_DELAY);
-    display.print(" m/s");
-
-    display.setCursor(10, 48);
-    switch (flight_state) {
-      case CALIBRATION:
-        display.print("CALIBRATE");
-        break;
-      case PREFLIGHT:
-        display.print("PREFLIGHT");
-        break;
-      case ASCENT:
-        display.print("ASCENT");
-        break;
-      case FREEFALL:
-        display.print("FREEFALL");
-        break;
-      case LANDING:
-        display.print("LANDING");
-        break;
-    }
-    display.display();
-#endif
-    vTaskDelayUntil(&last_wake, ALTITUDE_CHECK_DELAY / portTICK_PERIOD_MS);
   }
 }
+
 
 void cameraCapture(void *parameter) {
   vTaskSuspend(NULL);  // Initially suspend task
@@ -702,7 +667,7 @@ float Tempreading() {
   Serial.println(reading);
 
   // convert the value to resistance
-  reading = .1; //1023 / reading - 1;
+  reading = 4095 / reading - 1;
   reading = SERIESRESISTOR / reading;
   Serial.print("Thermistor resistance ");
   Serial.println(reading);
@@ -718,5 +683,8 @@ float Tempreading() {
   Serial.print(steinhart);
   Serial.println(" *C");
   delay(10);
+
+  return steinhart;
 }
+
 /* ================================= */
