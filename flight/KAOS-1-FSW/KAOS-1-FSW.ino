@@ -694,33 +694,21 @@ void landingRun() {
 
 
 float Tempreading() {
-  int samples[NUMSAMPLES];
-  uint8_t i;
-  float average;
+  float reading;
 
-  // take N samples in a row, with a slight delay
-  for (i = 0; i < NUMSAMPLES; i++) {
-    samples[i] = analogRead(THERMISTORPIN);
-    delay(10);
-  }
-  // average all the samples out
-  average = 0;
-  for (i = 0; i < NUMSAMPLES; i++) {
-    average += samples[i];
-  }
-  average /= NUMSAMPLES;
+  reading = analogRead(THERMISTOR);
 
-  Serial.print("Average analog reading ");
-  Serial.println(average);
+  Serial.print("analog reading ");
+  Serial.println(reading);
 
   // convert the value to resistance
-  average = 1023 / average - 1;
-  average = SERIESRESISTOR / average;
+  reading = .1; //1023 / reading - 1;
+  reading = SERIESRESISTOR / reading;
   Serial.print("Thermistor resistance ");
-  Serial.println(average);
+  Serial.println(reading);
 
   float steinhart;
-  steinhart = average / THERMISTORNOMINAL;           // (R/Ro)
+  steinhart = reading / THERMISTORNOMINAL;           // (R/Ro)
   steinhart = log(steinhart);                        // ln(R/Ro)
   steinhart /= BCOEFFICIENT;                         // 1/B * ln(R/Ro)
   steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15);  // + (1/To)
@@ -731,5 +719,4 @@ float Tempreading() {
   Serial.println(" *C");
   delay(10);
 }
-
 /* ================================= */
