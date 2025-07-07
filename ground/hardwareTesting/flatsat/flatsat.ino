@@ -9,6 +9,7 @@
 #include "RTClib.h"
 #include "Arducam_Mega.h"
 #include "Arducam/Platform.h"
+#include "driver/i2c.h"
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 #define PIC_BUFFER_SIZE  0xff
@@ -31,7 +32,7 @@ Adafruit_BMP3XX bmp;
 RTC_DS1307 rtc;
 
 Arducam_Mega camA(CAM_A_CS);
-Arducam_Mega camB(CAM_B_CS);
+//Arducam_Mega camB(CAM_B_CS);
 
 //SPIClass *vspi;
 SPIClass *hspi;
@@ -53,6 +54,8 @@ void write_pic(Arducam_Mega &cam, File dest) {
   uint8_t head_flag = 0;
   unsigned int i = 0;
   uint8_t image_buf[PIC_BUFFER_SIZE] = {0};
+
+  Serial.println("Writing image");
 
   while (cam.getReceivedLength())
   {
@@ -108,6 +111,7 @@ void setup() {
   hspi = new SPIClass(HSPI);
 
   Wire.begin();
+  i2c_set_timeout((i2c_port_t)I2C_NUM_0, 0xFFFFF); 
 
 
 
@@ -143,8 +147,8 @@ void setup() {
   // Camera setup
   Serial.println("Initializing ArduCam A");
   camA.begin();
-  Serial.println("Initializing ArduCam B");
-  camB.begin();
+  //Serial.println("Initializing ArduCam B");
+  //camB.begin();
 
   // SD CARD SETUP
   Serial.println("Setting up SD card");
@@ -176,7 +180,9 @@ void setup() {
 
 void loop() {
   // Wait for RDY interrupt then reset flag
+  Serial.println("Waiting for SCD30");
   while(!data_ready) { delay(10); }
+  Serial.println("SCD30 ready");
   data_ready = false;
 
   if (! scd30.read()) { Serial.println("Error reading SCD30 data"); return; }
@@ -195,9 +201,13 @@ void loop() {
   }
 
   // take pictures
+  Serial.println("Taking picture cam a");
   camA.takePicture(CAM_IMAGE_MODE_WQXGA2,CAM_IMAGE_PIX_FMT_JPG);
-  camB.takePicture(CAM_IMAGE_MODE_WQXGA2,CAM_IMAGE_PIX_FMT_JPG);
+  //Serial.println("Taking picture cam b");
+  //camB.takePicture(CAM_IMAGE_MODE_WQXGA2,CAM_IMAGE_PIX_FMT_JPG);
 
+
+  Serial.println("Writing data");
   // date
   DateTime now = rtc.now();
   file.print(now.month());
@@ -272,9 +282,9 @@ void loop() {
   write_pic(camA, file);
 
   // Save cam B pic
-  sprintf(fp, "%s/b%d.jpg", base_dir, pic_num);
+  /*sprintf(fp, "%s/b%d.jpg", base_dir, pic_num);
   file = SD.open(fp, FILE_WRITE);
-  write_pic(camB, file);
+  write_pic(camB, file);*/
 
   pic_num++;
 }
