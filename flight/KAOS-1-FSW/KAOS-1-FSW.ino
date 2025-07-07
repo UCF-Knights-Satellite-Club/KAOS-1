@@ -1,40 +1,33 @@
-//Including the libraries that we will be using in the code
-#include <Wire.h>               //Allows communication between Arduino and the other devices
-
-//Libraries for sensor use and data collection
-#include <Adafruit_MMA8451.h>   //Library for the accelerometer
-#include <Adafruit_Sensor.h>    //Gives a unified interface for a bunch of adafruit sensors
-#include <Adafruit_BMP3XX.h>    //Library for the barometer
-#include <Adafruit_GFX.h>       //Library used to draw shaped, texts, etc 
-#include <Adafruit_SSD1306.h>   //Library for controlling the OLED display
-
-//Libraries for the camera and interface with the camera
-#include <Arducam_Mega.h>       //Library for interface with the Camera 
-#include <Arducam/Platform.h> 
-
-//Libraries for data storage and transfer
-#include <SPI.h>                //Library for data transfer
-#include <FS.h>                 //Library that provides file operations for storage on the SD card
-#include <SD.h>                 //Library used for interfacing with SD cards
-
+#include <Adafruit_SCD30.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <Adafruit_Sensor.h>
+#include "Adafruit_BMP3XX.h"
+#include "FS.h"
+#include "SD.h"
+#include "SPI.h"
+#include "RTClib.h"
+#include "Arducam_Mega.h"
+#include "Arducam/Platform.h"
+#include "driver/i2c.h"
 
 // Pin constants
-#define CAM_CS_A      4
-#define CAM_CS_B      5
-#define HSPI_MISO     12
-#define HSPI_MOSI     13
-#define HSPI_CLK      14
-#define SD_CS         15
-#define VSPI_CLK      18
-#define VSPI_MISO     19
-#define I2C_SDA       21
-#define I2C_SCL       22
-#define VSPI_MOSI     23
-#define BUZZER_PIN    25
-#define SCD30_RDY     27
-#define BMP388_INT    32
-#define THERMISTOR    33
-#define BATT_VOLTAGE  34
+#define CAM_CS_A 4
+#define CAM_CS_B 5
+#define HSPI_MISO 12
+#define HSPI_MOSI 13
+#define HSPI_CLK 14
+#define SD_CS 15
+#define VSPI_CLK 18
+#define VSPI_MISO 19
+#define I2C_SDA 21
+#define I2C_SCL 22
+#define VSPI_MOSI 23
+#define BUZZER_PIN 25
+#define SCD30_RDY 27
+#define BMP388_INT 32
+#define THERMISTOR 33
+#define BATT_VOLTAGE 34
 
 
 // Depending on the selected board, may or may not be defined already
@@ -59,16 +52,14 @@
 #define PARACHUTE_DEPLOY_ALTITUDE 80          // altutude to switch from FREEFALL to LANDING
 #define ALTITUDE_DELTA_FILTER_GAIN 0.95       // between 0 and 1, higher number means each measurement has lower impact on estimate
 #define ACCEL_FILTER_GAIN 0.5                 // same as altitude
+#define BUZZER_INTERVAL 500
 
-
-// Define TEST_MODE to enable test mode
-// #define TEST_MODE
+#define BUZZER_PIN 25  // Piezoelectric buzzer
 
 // Peripheral globals
-Adafruit_MMA8451 mma = Adafruit_MMA8451();
 Adafruit_BMP3XX bmp;
-Adafruit_SSD1306 display(128, 64, &Wire, -1);  // select reset pin (just set to any unused pin)
-Arducam_Mega cam(CAM_CS_A);
+Arducam_Mega camA(CAM_CS_A);
+//Arducam_Mega camB(CAM_CS_B);
 
 
 // Function definitions
@@ -132,58 +123,94 @@ typedef struct {
   FlightState flight_state;
 } DataPoint;
 
-FlightState flight_state = CALIBRATION;
+FlightState flight_state = LANDING;
+Adafruit_SCD30 scd30;
+RTC_DS1307 rtc;
+
+//SPIClass *vspi;
+SPIClass *hspi;
+
+bool data_ready = false;
+
+void IRAM_ATTR scd30_ready() {
+  data_ready = true;
+}
 
 void setup() {
   // LED on for entire setup process
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
 
+  // BUZZER PINMODE
+  pinMode(BUZZER_PIN, OUTPUT);
+
   // init serial
   Serial.begin(115200);
 
-  // setup OLED if test mode is enabled
-  #ifdef TEST_MODE
-    display.begin(SSD1306_SWITCHCAPVCC, 0x3c);  // i2c address
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-  #endif
+  hspi = new SPIClass(HSPI);
 
-  // setup MMA
-  if (!mma.begin()) {
-    Serial.println("Couldnt start MMA");
-    while (1) {}
+  Wire.begin();
+  i2c_set_timeout((i2c_port_t)I2C_NUM_0, 0xFFFFF);
+
+
+
+  // BMP388 SETUP
+  Serial.println("Setting up BMP sensor");
+  if (!bmp.begin_I2C()) {
+    Serial.println("Could not find a valid BMP3 sensor.");
+    return;
   }
-  mma.setRange(MMA8451_RANGE_2_G);
-
-  // setup BMP
-  if (!bmp.begin_I2C()) {  // hardware I2C mode, can pass in address & alt Wire
-    Serial.println("Couldn't start BMP");
-    while (1) {}
-  }
-
-  // Set up oversampling and filter initialization
   bmp.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
   bmp.setPressureOversampling(BMP3_OVERSAMPLING_4X);
   bmp.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
   bmp.setOutputDataRate(BMP3_ODR_50_HZ);
 
-  // Preload data into bmp
-  bmp.performReading();
-
-
-
-  // init ArduCam, must be done before SD setup so CS lines are configured properly
-  cam.begin();
-
-  // setup SD
-  if (!SD.begin(SD_CS)) {
-    Serial.println("Card mount failed");
-    sd_fail = true;
-  } else if (SD.cardType() == CARD_NONE) {
-    Serial.println("No SD card attached");
-    sd_fail = true;
+  // SCD30 SETUP
+  Serial.println("Setting up SCD30");
+  if (!scd30.begin()) {
+    Serial.println("Failed to find SCD30 chip");
+    return;
   }
+
+  // RTC SETUP
+  Serial.println("Setting up RTC");
+  if (!rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    return;
+  }
+
+  // Camera setup
+  Serial.println("Initializing ArduCam A");
+  camA.begin();
+  //Serial.println("Initializing ArduCam B");
+  //camB.begin();
+
+  // SD CARD SETUP
+  Serial.println("Setting up SD card");
+  if (!SD.begin(SD_CS, *hspi)) {
+    Serial.println("Card Mount Failed");
+    return;
+  }
+  uint8_t cardType = SD.cardType();
+
+  if (cardType == CARD_NONE) {
+    Serial.println("No SD card attached");
+    return;
+  }
+
+  // Pick base dir
+  int i = 0;
+  do {
+    sprintf(base_dir, "/kaoslog%d", i);
+    i++;
+  } while (SD.exists(base_dir));
+  SD.mkdir(base_dir);
+  Serial.print("Data from this run stored in ");
+  Serial.println(base_dir);
+
+  // Configure SCD30 RDY interrupt
+  pinMode(SCD30_RDY, INPUT_PULLDOWN);
+  attachInterrupt(SCD30_RDY, scd30_ready, RISING);
 
   // Queues data to be logged to SD
   log_queue = xQueueCreate(20, sizeof(DataPoint));
@@ -241,8 +268,7 @@ void setup() {
     NULL,
     tskIDLE_PRIORITY,  // Lowest possible priority, see https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/01-Tasks-and-co-routines/15-Idle-task
     &camera_capture,
-    0
-  );
+    0);
 
   // Create task for logging data to SD
   xTaskCreatePinnedToCore(
@@ -252,8 +278,7 @@ void setup() {
     NULL,
     1,
     &log_data,
-    0
-  );
+    0);
 
   // Delay to stop first image from being green
   vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -276,8 +301,8 @@ void loop() {
 
 // Periodically monitors sensor data and performs state switches
 void checkAltitude(void *parameter) {
-  vTaskSuspend(NULL); // Initially suspend task
-  
+  vTaskSuspend(NULL);  // Initially suspend task
+
   TickType_t last_wake = xTaskGetTickCount();
 
   while (1) {
@@ -298,10 +323,10 @@ void checkAltitude(void *parameter) {
     prev_altitude = absolute_altitude;
 
     // Get imu data
-    mma.read();
-    float accel_x = mma.x_g * SENSORS_GRAVITY_STANDARD;
-    float accel_y = mma.y_g * SENSORS_GRAVITY_STANDARD;
-    float accel_z = mma.z_g * SENSORS_GRAVITY_STANDARD;
+    //mma.read();
+    float accel_x = 0;
+    float accel_y = 0;
+    float accel_z = 0;
 
     // Lowpass filter, smoothes out noisy data
     altitude_delta_estimate = (ALTITUDE_DELTA_FILTER_GAIN * prev_altitude_delta_estimate) + (1 - ALTITUDE_DELTA_FILTER_GAIN) * altitude_delta;
@@ -379,53 +404,53 @@ void checkAltitude(void *parameter) {
       logindex++;
     }
 
-    #ifdef TEST_MODE
-      // display code:
-      display.clearDisplay();
-      display.drawRoundRect(0, 0, 128, 64, 8, WHITE);
-      display.setRotation(2);
-      display.setCursor(15, 3);
-      if (flight_state != CALIBRATION) {
-        display.setCursor(altitude >= 0 ? 22 : 10, 8);
-        display.print(altitude);
-      } else {
-        display.setCursor(absolute_altitude >= 0 ? 22 : 10, 8);
-        display.print(absolute_altitude);
-      }
-      display.print(" m");
-      display.setCursor(altitude_delta_estimate >= 0 ? 22 : 10, 28);
-      display.print(altitude_delta_estimate * 1000 / ALTITUDE_CHECK_DELAY);
-      display.print(" m/s");
+#ifdef TEST_MODE
+    // display code:
+    display.clearDisplay();
+    display.drawRoundRect(0, 0, 128, 64, 8, WHITE);
+    display.setRotation(2);
+    display.setCursor(15, 3);
+    if (flight_state != CALIBRATION) {
+      display.setCursor(altitude >= 0 ? 22 : 10, 8);
+      display.print(altitude);
+    } else {
+      display.setCursor(absolute_altitude >= 0 ? 22 : 10, 8);
+      display.print(absolute_altitude);
+    }
+    display.print(" m");
+    display.setCursor(altitude_delta_estimate >= 0 ? 22 : 10, 28);
+    display.print(altitude_delta_estimate * 1000 / ALTITUDE_CHECK_DELAY);
+    display.print(" m/s");
 
-      display.setCursor(10, 48);
-      switch (flight_state) {
-        case CALIBRATION:
-          display.print("CALIBRATE");
-          break;
-        case PREFLIGHT:
-          display.print("PREFLIGHT");
-          break;
-        case ASCENT:
-          display.print("ASCENT");
-          break;
-        case FREEFALL:
-          display.print("FREEFALL");
-          break;
-        case LANDING:
-          display.print("LANDING");
-          break;
-      }
-      display.display();
-    #endif
+    display.setCursor(10, 48);
+    switch (flight_state) {
+      case CALIBRATION:
+        display.print("CALIBRATE");
+        break;
+      case PREFLIGHT:
+        display.print("PREFLIGHT");
+        break;
+      case ASCENT:
+        display.print("ASCENT");
+        break;
+      case FREEFALL:
+        display.print("FREEFALL");
+        break;
+      case LANDING:
+        display.print("LANDING");
+        break;
+    }
+    display.display();
+#endif
     vTaskDelayUntil(&last_wake, ALTITUDE_CHECK_DELAY / portTICK_PERIOD_MS);
   }
 }
 
 void cameraCapture(void *parameter) {
-  vTaskSuspend(NULL); // Initially suspend task
+  vTaskSuspend(NULL);  // Initially suspend task
   while (1) {
     Serial.println("Taking picture");
-    cam.takePicture(CAM_IMAGE_MODE, CAM_IMAGE_PIX_FMT_JPG);
+    camA.takePicture(CAM_IMAGE_MODE, CAM_IMAGE_PIX_FMT_JPG);
     char fp[35];
     sprintf(fp, "%s/pic%d.jpg", base_dir, pic_num);
     pic_num++;
@@ -433,7 +458,7 @@ void cameraCapture(void *parameter) {
     if (xSemaphoreTake(spi_mutex, SPI_MUTEX_WAIT) == pdTRUE) {
       File file = SD.open(fp, FILE_WRITE);
       xSemaphoreGive(spi_mutex);
-      write_pic(cam, file);
+      write_pic(camA, file);
       Serial.print("Picutre saved to ");
       Serial.println(fp);
     }
@@ -441,7 +466,7 @@ void cameraCapture(void *parameter) {
 }
 
 void logData(void *parameter) {
-  vTaskSuspend(NULL); // Initially suspend task
+  vTaskSuspend(NULL);  // Initially suspend task
   while (1) {
     if (uxQueueMessagesWaiting(log_queue) > 0) {
       if (xSemaphoreTake(spi_mutex, SPI_MUTEX_WAIT) == pdTRUE) {
@@ -631,12 +656,32 @@ void freefallRun() {
     flight_state = LANDING;
 
     Serial.println("Parachute deployment altitude reached, moving to LANDING");
-
   }
 }
 
 void landingRun() {
-  // Deploy parachute, no more state changes
+  // Deploy parachute, buzzer loop, last stage of flight
+  static unsigned long previousmillis = 0;
+  unsigned long currentmillis = millis();  // checks and updates time value for the upcoming calculations
+
+  if (currentmillis - previousmillis >= BUZZER_INTERVAL) {
+    previousmillis = currentmillis;  // updates previousmillis for the next run
+
+    static bool buzzer_on = false;
+
+    // below if statement will turn the buzzer on if buzzer_on is false.
+
+    if (buzzer_on) {
+      noTone(BUZZER_PIN);
+    } else {
+      tone(BUZZER_PIN, 3000);
+    }
+
+    buzzer_on = !buzzer_on;  // changes state for next run
+  }
 }
+
+
+
 
 /* ================================= */
