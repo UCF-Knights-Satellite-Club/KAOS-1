@@ -47,7 +47,7 @@
 #define PIC_BUFFER_SIZE 254                   // buffer size to store images, must be less than 255
 #define CAM_IMAGE_MODE CAM_IMAGE_MODE_WQXGA2  // ArduCam image mode
 #define SPI_CLOCK_DIV SPI_CLOCK_DIV16         // SPI clock divider, lowers SPI clock speeds to prevent image corruption
-#define LOG_QUEUE_SIZE 20                     // how many entries to store before dropping data
+#define LOG_QUEUE_SIZE 50                     // how many entries to store before dropping data
 #define SPI_MUTEX_WAIT 20                     // how many ms to wait for SPI mutex lock before giving up
 #define LOG_DELAY 100                         // how many ms to wait between logging to SD
 #define CALIBRATION_COUNT 20                  // how many measurements to average when determining initial altitude
@@ -59,10 +59,10 @@
 #define PARACHUTE_DEPLOY_ALTITUDE 80          // altutude to switch from FREEFALL to LANDING
 #define ALTITUDE_DELTA_FILTER_GAIN 0.95       // between 0 and 1, higher number means each measurement has lower impact on estimate
 #define ACCEL_FILTER_GAIN 0.5                 // same as altitude
-#define THERMISTORNOMINAL 10000               // resistance at 25 degrees C of thermistor
+#define THERMISTORNOMINAL 7300               // resistance at 25 degrees C of thermistor
 #define TEMPERATURENOMINAL 25                 // temp. for nominal resistance of thermistor (almost always 25 C)
-#define NUMSAMPLES 5                          // how many samples to take and average for the thermistor
 #define BCOEFFICIENT 3950                     // The beta coefficient of the thermistor (usually 3000-4000)
+#define THERM_TEMP_FILTER_GAIN 0.95
 #define SERIESRESISTOR 10000                  // the value of the 'other' resistor connected to the thermistor
 #define BUZZER_INTERVAL 500
 
@@ -82,7 +82,7 @@ void landingRun();
 void checkAltitude(void *parameter);
 void cameraCapture(void *parameter);
 void logData(void *parameter);
-float Tempreading();
+void Tempreading(float* temp, float* resistance);
 
 // Globals
 static TaskHandle_t check_altitude;
@@ -108,6 +108,8 @@ float absolute_altitude = 0;
 float ground_altitude = 0;
 float altitude_delta = 0;
 float prev_altitude = 0;
+float therm_temp_estimate = 0;
+float prev_therm_temp_estimate = 0;
 char logpath[35];
 int logindex = 0;
 
@@ -131,6 +133,8 @@ typedef struct {
   float accel_z;
   float accel_filtered;
   float ascent_velocity_filtered;
+  float therm_resistance;
+  float therm_temp;
   FlightState flight_state;
 } DataPoint;
 
@@ -224,7 +228,7 @@ void setup() {
   attachInterrupt(SCD30_RDY, scd30_ready, RISING);
 
   // Queues data to be logged to SD
-  log_queue = xQueueCreate(20, sizeof(DataPoint));
+  log_queue = xQueueCreate(LOG_QUEUE_SIZE, sizeof(DataPoint));
   if (log_queue == NULL) {
     Serial.print("Unable to create log queue");
     while (1) {}
@@ -255,7 +259,7 @@ void setup() {
     // Write CSV header
     File log_file = SD.open(logpath, FILE_APPEND);
     if (log_file) {
-      log_file.println("index,temp,pressure,altitude,accelx,accely,accelz,accel_filtered,ascent_velocity,state");
+      log_file.println("index,bmp_temp,pressure,altitude,accelx,accely,accelz,accel_filtered,ascent_velocity,therm_resistance, therm_temp,state");
       log_file.close();
     }
   }
@@ -357,7 +361,12 @@ void checkAltitude(void *parameter) {
 
     accel_magnitude = sqrtf(accel_x_estimate * accel_x_estimate + accel_y_estimate * accel_y_estimate + accel_z_estimate * accel_z_estimate);
 
-    Tempreading();
+    float temp, resistance;
+    Tempreading(&temp, &resistance);
+    
+
+    therm_temp_estimate = (THERM_TEMP_FILTER_GAIN * prev_therm_temp_estimate) + (1- THERM_TEMP_FILTER_GAIN) * temp;
+    prev_therm_temp_estimate = therm_temp_estimate;
 
     /*
     Serial.print("accel:");
@@ -407,6 +416,8 @@ void checkAltitude(void *parameter) {
           accel_z,
           accel_magnitude,
           altitude_delta_estimate * 1000 / ALTITUDE_CHECK_DELAY,
+          resistance,
+          therm_temp_estimate,
           flight_state
         };
         if (xQueueSendToBack(log_queue, &data_point, 0) == pdFALSE) {
@@ -467,6 +478,10 @@ void logData(void *parameter) {
             log_file.print(data_point.accel_filtered);
             log_file.print(",");
             log_file.print(data_point.ascent_velocity_filtered);
+            log_file.print(",");
+            log_file.print(data_point.therm_resistance);
+            log_file.print(",");
+            log_file.print(data_point.therm_temp);
             log_file.print(",");
             log_file.println(data_point.flight_state);
           }
@@ -658,19 +673,18 @@ void landingRun() {
 }
 
 
-float Tempreading() {
+void Tempreading(float* temp, float* resistance) {
   float reading;
 
   reading = analogRead(THERMISTOR);
 
-  Serial.print("analog reading ");
-  Serial.println(reading);
+  // Serial.print("analog reading ");
+  // Serial.println(reading);
 
   // convert the value to resistance
   reading = 4095 / reading - 1;
   reading = SERIESRESISTOR / reading;
-  Serial.print("Thermistor resistance ");
-  Serial.println(reading);
+  *resistance = reading;
 
   float steinhart;
   steinhart = reading / THERMISTORNOMINAL;           // (R/Ro)
@@ -679,12 +693,10 @@ float Tempreading() {
   steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15);  // + (1/To)
   steinhart = 1.0 / steinhart;                       // Invert
   steinhart -= 273.15;                               // convert absolute temp to C
-  Serial.print("Temperature ");
-  Serial.print(steinhart);
-  Serial.println(" *C");
-  delay(10);
-
-  return steinhart;
+  *temp = steinhart;                             
+  // Serial.print("Temperature ");
+  // Serial.print(steinhart);
+  // Serial.println(" *C");
 }
 
 /* ================================= */
