@@ -212,17 +212,7 @@ void setup() {
     Serial.println("No SD card attached");
     return;
   }
-
-  // Pick base dir
-  int i = 0;
-  do {
-    sprintf(base_dir, "/kaoslog%d", i);
-    i++;
-  } while (SD.exists(base_dir));
-  SD.mkdir(base_dir);
-  Serial.print("Data from this run stored in ");
-  Serial.println(base_dir);
-
+  
   // Configure SCD30 RDY interrupt
   pinMode(SCD30_RDY, INPUT_PULLDOWN);
   attachInterrupt(SCD30_RDY, scd30_ready, RISING);
