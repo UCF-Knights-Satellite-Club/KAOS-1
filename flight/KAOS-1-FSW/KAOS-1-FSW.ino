@@ -59,17 +59,17 @@
 #define PARACHUTE_DEPLOY_ALTITUDE 80          // altutude to switch from FREEFALL to LANDING
 #define ALTITUDE_DELTA_FILTER_GAIN 0.95       // between 0 and 1, higher number means each measurement has lower impact on estimate
 #define ACCEL_FILTER_GAIN 0.5                 // same as altitude
-#define THERMISTORNOMINAL 7300               // resistance at 25 degrees C of thermistor
+#define THERMISTORNOMINAL 7300                // resistance at 25 degrees C of thermistor
 #define TEMPERATURENOMINAL 25                 // temp. for nominal resistance of thermistor (almost always 25 C)
 #define BCOEFFICIENT 3950                     // The beta coefficient of the thermistor (usually 3000-4000)
 #define THERM_TEMP_FILTER_GAIN 0.95
-#define SERIESRESISTOR 10000                  // the value of the 'other' resistor connected to the thermistor
+#define SERIESRESISTOR 10000  // the value of the 'other' resistor connected to the thermistor
 #define BUZZER_INTERVAL 500
 
 // Peripheral globals
 Adafruit_BMP3XX bmp;
 Arducam_Mega camA(CAM_CS_A);
-//Arducam_Mega camB(CAM_CS_B);
+Arducam_Mega camB(CAM_CS_B);
 
 
 // Function definitions
@@ -82,7 +82,8 @@ void landingRun();
 void checkAltitude(void *parameter);
 void cameraCapture(void *parameter);
 void logData(void *parameter);
-void Tempreading(float* temp, float* resistance);
+void Tempreading(float *temp, float *resistance);
+float Batt_read();
 
 // Globals
 static TaskHandle_t check_altitude;
@@ -135,6 +136,7 @@ typedef struct {
   float ascent_velocity_filtered;
   float therm_resistance;
   float therm_temp;
+  float batt_voltage;
   FlightState flight_state;
 } DataPoint;
 
@@ -197,8 +199,8 @@ void setup() {
   // Camera setup
   Serial.println("Initializing ArduCam A");
   camA.begin();
-  //Serial.println("Initializing ArduCam B");
-  //camB.begin();
+  Serial.println("Initializing ArduCam B");
+  camB.begin();
 
   // SD CARD SETUP
   Serial.println("Setting up SD card");
@@ -212,7 +214,7 @@ void setup() {
     Serial.println("No SD card attached");
     return;
   }
-  
+
   // Configure SCD30 RDY interrupt
   pinMode(SCD30_RDY, INPUT_PULLDOWN);
   attachInterrupt(SCD30_RDY, scd30_ready, RISING);
@@ -249,7 +251,7 @@ void setup() {
     // Write CSV header
     File log_file = SD.open(logpath, FILE_APPEND);
     if (log_file) {
-      log_file.println("index,bmp_temp,pressure,altitude,accelx,accely,accelz,accel_filtered,ascent_velocity,therm_resistance, therm_temp,state");
+      log_file.println("index,bmp_temp,pressure,altitude,accelx,accely,accelz,accel_filtered,ascent_velocity,therm_resistance,therm_temp,batt_voltage,state");
       log_file.close();
     }
   }
@@ -353,9 +355,11 @@ void checkAltitude(void *parameter) {
 
     float temp, resistance;
     Tempreading(&temp, &resistance);
-    
 
-    therm_temp_estimate = (THERM_TEMP_FILTER_GAIN * prev_therm_temp_estimate) + (1- THERM_TEMP_FILTER_GAIN) * temp;
+    float batt_voltage = Batt_read();
+
+
+    therm_temp_estimate = (THERM_TEMP_FILTER_GAIN * prev_therm_temp_estimate) + (1 - THERM_TEMP_FILTER_GAIN) * temp;
     prev_therm_temp_estimate = therm_temp_estimate;
 
     /*
@@ -408,6 +412,7 @@ void checkAltitude(void *parameter) {
           altitude_delta_estimate * 1000 / ALTITUDE_CHECK_DELAY,
           resistance,
           therm_temp_estimate,
+          batt_voltage,
           flight_state
         };
         if (xQueueSendToBack(log_queue, &data_point, 0) == pdFALSE) {
@@ -419,6 +424,7 @@ void checkAltitude(void *parameter) {
 
       logindex++;
     }
+    vTaskDelayUntil(&last_wake, ALTITUDE_CHECK_DELAY / portTICK_PERIOD_MS);
   }
 }
 
@@ -428,16 +434,26 @@ void cameraCapture(void *parameter) {
   while (1) {
     Serial.println("Taking picture");
     camA.takePicture(CAM_IMAGE_MODE, CAM_IMAGE_PIX_FMT_JPG);
-    char fp[35];
-    sprintf(fp, "%s/pic%d.jpg", base_dir, pic_num);
+    camB.takePicture(CAM_IMAGE_MODE, CAM_IMAGE_PIX_FMT_JPG);
+    char fpa[35];
+    char fpb[35];
+    sprintf(fpa, "%s/pic%da.jpg", base_dir, pic_num);
+    sprintf(fpb, "%s/pic%db.jpg", base_dir, pic_num);
     pic_num++;
     Serial.println("Saving picture");
     if (xSemaphoreTake(spi_mutex, SPI_MUTEX_WAIT) == pdTRUE) {
-      File file = SD.open(fp, FILE_WRITE);
+      File file = SD.open(fpa, FILE_WRITE);
       xSemaphoreGive(spi_mutex);
       write_pic(camA, file);
       Serial.print("Picutre saved to ");
-      Serial.println(fp);
+      Serial.println(fpa);
+    }
+    if (xSemaphoreTake(spi_mutex, SPI_MUTEX_WAIT) == pdTRUE) {
+      File file = SD.open(fpb, FILE_WRITE);
+      xSemaphoreGive(spi_mutex);
+      write_pic(camB, file);
+      Serial.print("Picutre saved to ");
+      Serial.println(fpb);
     }
   }
 }
@@ -472,6 +488,8 @@ void logData(void *parameter) {
             log_file.print(data_point.therm_resistance);
             log_file.print(",");
             log_file.print(data_point.therm_temp);
+            log_file.print(",");
+            log_file.print(data_point.batt_voltage);
             log_file.print(",");
             log_file.println(data_point.flight_state);
           }
@@ -663,7 +681,7 @@ void landingRun() {
 }
 
 
-void Tempreading(float* temp, float* resistance) {
+void Tempreading(float *temp, float *resistance) {
   float reading;
 
   reading = analogRead(THERMISTOR);
@@ -683,10 +701,22 @@ void Tempreading(float* temp, float* resistance) {
   steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15);  // + (1/To)
   steinhart = 1.0 / steinhart;                       // Invert
   steinhart -= 273.15;                               // convert absolute temp to C
-  *temp = steinhart;                             
+  *temp = steinhart;
   // Serial.print("Temperature ");
   // Serial.print(steinhart);
   // Serial.println(" *C");
+}
+
+
+float Batt_read() {
+  float reading;
+
+  reading = analogRead(BATT_VOLTAGE);
+
+  // Voltage conversion with 3x divider
+  reading *= 9.9 / 4095;
+
+  return reading;
 }
 
 /* ================================= */
